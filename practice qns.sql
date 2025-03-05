@@ -617,5 +617,7 @@ select category from cte
 group by category
 having count(distinct month) = 12;
 
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 

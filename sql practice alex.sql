@@ -168,3 +168,14 @@ with cte AS
 FROM purchases)
 SELECT customer_id,transaction_id,amount, amount*0.67 as discounted_amount
 FROM cte where d=3;
+
+17.Write a query to find the people who spent a higher than average amount of time on social media.
+users_time                                              users
+user_id  media_time_minutes                       user_id      first_name
+1              0                                     1           John
+2              200                                   2           Janice
+
+SELECT first_name
+FROM user_time as t join users as u on t.user_id=u.user_id
+  where media_time_minutes>(SELECT avg(media_time_minutes) from user_time)
+ order by first_name ASC;

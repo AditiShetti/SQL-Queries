@@ -152,9 +152,9 @@ FROM bad_data;
 16..Every 3rd transaction must be given a 33% discount.Output the customer id, transaction id, amount,
  and the amount after the discount as "discounted_amount".
  customer_id	transaction_id	amount
-1001	          339473	        89
-1002	          359433        	5
-1003	          43176	          52
+1001	          339473	        89  
+1002	          359433        	5  
+1003	          43176	          52  
 with cte AS
   (SELECT customer_id,
   transaction_id,

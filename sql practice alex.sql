@@ -19,7 +19,7 @@ order by profit desc limit 1;
  patient_id	  age	  cholesterol 	weight
 1001	        52    	373        	267
 1002	        93    	235	        164
-1003	        77	    324	        211...
+1003	        77	  324	        211...
 
 SELECT *
 FROM patients

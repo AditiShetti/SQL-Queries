@@ -9,8 +9,10 @@ Contains a variety of SQL questions across topics like joins, aggregation, subqu
 
 
 
-I have completed the SQL tutorials on SQLBolt https://sqlbolt.com/lesson/select_queries_introduction.
-This was a good hands-on interactive activity to brush up the basics of sql for anyone.  
+• I have completed the SQL tutorials on SQLBolt https://sqlbolt.com/lesson/select_queries_introduction.
+  This was a good hands-on interactive activity to brush up the basics of sql for anyone. 
+• I have also done most of the free  Questions on Analyst Builder. https://www.analystbuilder.com/questions?status=incomplete&accessType=free
+  A few moderate and Hard questions are left.   
  
 I plan to keep adding more queries that I find interesting .  
 

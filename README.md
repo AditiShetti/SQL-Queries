@@ -18,7 +18,7 @@ Contains a variety of SQL questions across topics like joins, aggregation, subqu
 • I have also done most of the free  Questions on Analyst Builder. https://www.analystbuilder.com/questions?status=incomplete&accessType=free
   A few moderate and Hard questions are left.   
   
-• I have completed the SQL practice on Hospital database on :  https://www.sql-practice.com/
+• I have completed the SQL practice on Hospital database and the Northwind database on :  https://www.sql-practice.com/
   The website has questions from easy , medium to hard level for all topics of sql.  
   
  

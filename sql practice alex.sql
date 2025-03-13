@@ -179,3 +179,15 @@ SELECT first_name
 FROM user_time as t join users as u on t.user_id=u.user_id
   where media_time_minutes>(SELECT avg(media_time_minutes) from user_time)
  order by first_name ASC;
+
+
+18.If a customer is 55 or above they qualify for the senior citizen discount. Check which customers qualify.
+Assume the current date 1/1/2023.
+
+customer_id  	birth_date
+YVD4753692	  1989-03-25
+XBJ9334631	  1964-06-12
+SELECT customer_id
+FROM customers
+WHERE TIMESTAMPDIFF(YEAR ,birth_date,'2023-01-01')>=55 
+ ORDER BY  customer_id ;

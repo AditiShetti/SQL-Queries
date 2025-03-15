@@ -22,9 +22,9 @@ order by profit desc limit 1;
   then they are at high risk of having a heart attack.  Order by Cholesterol high to low.
  
  patient_id	  age	  cholesterol 	weight
-1001	        52    	373        	267
-1002	        93    	235	        164
-1003	        77	  324	        211...
+1001	        52     	373        	267
+1002	        93    	 235	        164
+1003	        77	    324	        211...
 
 SELECT *
 FROM patients

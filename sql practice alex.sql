@@ -221,7 +221,7 @@ Report the Manager ID, Manager Title, and the number of direct reports in your o
 
 employee_id	    position	          managers_id
 1001	          Analytics Manager	    1013
-1002           	Data Engineer	          1007
+1002            	Data Engineer	          1007
 
 SELECT a.employee_id as manager_id, a.position as manager_position,
      count(*) as direct_reports

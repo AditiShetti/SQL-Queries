@@ -213,3 +213,19 @@ SELECT product_name,
   else 'False' end as Shrinkflation
 FROM products
   ORDER by product_name;
+
+
+20.Write a query to determine how many direct reports each Manager has.
+Note: Managers will have "Manager" in their title.
+Report the Manager ID, Manager Title, and the number of direct reports in your output.
+
+employee_id	    position	          managers_id
+1001	          Analytics Manager	    1013
+1002           	Data Engineer	          1007
+
+SELECT a.employee_id as manager_id, a.position as manager_position,
+     count(*) as direct_reports
+FROM direct_reports as a
+join direct_reports as b on a.employee_id=b.managers_id
+  WHERE a.position like '%Manager%'
+  GROUP by a.employee_id,a.position;

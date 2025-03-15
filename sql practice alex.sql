@@ -5,9 +5,9 @@ Alex the Analyst
 1. Determine which Tesla Model has made the most profit.
 
 tesla_model	 car_price	 cars_sold 	production_cost
-Model 3     	46990	       156357	  	  	21000
-Model S	      104990       	23464	  	    	43000
-Model X	      120990	  	19542	  	    	48000...
+Model 3     	 46990	        156357	  	  	21000
+Model S	       104990        	23464	  	    	43000
+Model X	       120990	  	  19542	  	    	48000...
 
 
 tesla_model	 car_price	 cars_sold 	production_cost

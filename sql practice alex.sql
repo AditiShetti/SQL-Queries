@@ -117,9 +117,9 @@ ORDER by sum(fast_food_millions) desc limit 1 ;
 
 12.Return all IDs that have problem solving skills, SQL experience, knows Python or R, and has domain knowledge.
 candidate_id	sql_experience	excel	 python 	r_prog	problem_solving	 3_yoe 7_yoe	domain_knowledge
-1001	        X                	X    	X	       NULL    	 X	            X	            X	        X
-1002	        X                	X    	NULL	   X	       X	            NULL        	NULL	    NULL
-1003	        X                	X	    X        NULL	     X	            NULL         	NULL	    X
+1001	        X            	X    	X	       NULL    	 X	            X	            X	        X
+1002	        X            	X    	NULL	   X	       X	            NULL        	NULL	    NULL
+1003	        X            	X	    X        NULL	     X	            NULL         	NULL	    X
 
 SELECT candidate_id
 FROM candidates

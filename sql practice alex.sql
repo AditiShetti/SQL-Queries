@@ -59,10 +59,10 @@ If the post receives a score higher than 1 it was very popular.
 Return all the post IDs and their popularity where the score is 1 or greater.
 Order popularity from highest to lowest.
 
-post_id	impressions	  actions
-18492	    49582	        3891
+post_id	  impressions	  actions
+18492	      49582	        3891
 18493    	308331	      133
-18494	    99497        	4216
+18494	      99497        	4216
 SELECT post_id, (actions/impressions)*100 as r
 FROM linkedin_posts
   where (actions/impressions)*100  >1 

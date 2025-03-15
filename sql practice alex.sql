@@ -199,8 +199,8 @@ The output should have the columns Product_Name, Size_Change_Percentage, Price_C
 Round percentages to the nearest whole number and order the output on the product names alphabetically.
 
 
-product_id	product_name	    category	 original_size	new_size	            original_price	new_price            	date_changed
-1	          Cheerioes	        Cereals	   349.73	    321.75160000000005	    5.17	        5.2217	            2023-01-08
+product_id	product_name	    category	 original_size   	new_size	            original_price	new_price            	date_changed
+1	          Cheerioes	         Cereals	   349.73	    321.75160000000005	    5.17	        5.2217	            2023-01-08
 2          	Mountain Dew	    Beverages	  103.17	      99.0432                  	5.48	        5.863600000000001	    2022-12-09
 
 

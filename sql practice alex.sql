@@ -191,3 +191,25 @@ SELECT customer_id
 FROM customers
 WHERE TIMESTAMPDIFF(YEAR ,birth_date,'2023-01-01')>=55 
  ORDER BY  customer_id ;
+
+
+19.Write a query to identify products that have undergone shrink-flation over the last year. Shrink-flation is defined as a reduction in product size while maintaining or increasing the price.
+Include a flag for Shrinkflation. This should be a boolean value (True or False) indicating whether the product has undergone shrink-flation
+The output should have the columns Product_Name, Size_Change_Percentage, Price_Change_Percentage, and Shrinkflation_Flag.
+Round percentages to the nearest whole number and order the output on the product names alphabetically.
+
+
+product_id	product_name	    category	 original_size	new_size	            original_price	new_price            	date_changed
+1	          Cheerioes	        Cereals	   349.73	        321.75160000000005	      5.17	        5.2217	            2023-01-08
+2          	Mountain Dew	    Beverages	  103.17	      99.0432                  	5.48	        5.863600000000001	    2022-12-09
+
+
+  
+SELECT product_name,
+  round(((new_size-original_size)/original_size)*100,0) as Size_Change_Percentage,
+  round(((new_price-original_price)/original_price)*100,0) as Price_Change_Percentage,
+  case
+      when original_size>new_size and original_price<=new_price then 'True'
+  else 'False' end as Shrinkflation
+FROM products
+  ORDER by product_name;

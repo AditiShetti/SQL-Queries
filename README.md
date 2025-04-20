@@ -23,8 +23,8 @@ Contains a variety of SQL questions across topics like joins, aggregation, subqu
 
 • I have been revising the LeetCode - SQL 50 . I plan to use Python as well after completing SQL.   
   
+
  
 I plan to keep adding more queries that I find interesting.     
-
 
 😊😊  

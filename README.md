@@ -22,7 +22,7 @@ Contains a variety of SQL questions across topics like joins, aggregation, subqu
   The website has questions from easy , medium to hard level for all topics of sql.  
 
 • I have been revising the LeetCode - SQL 50 . I plan to use Python as well after completing SQL.  (24th April-Still at it) 29th April- ...
-  
+  9th may- ...
 
  
 I plan to keep adding more queries that I find interesting.     

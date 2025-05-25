@@ -229,3 +229,5 @@ FROM direct_reports as a
 join direct_reports as b on a.employee_id=b.managers_id
   WHERE a.position like '%Manager%'
   GROUP by a.employee_id,a.position;
+
+21.

@@ -86,32 +86,51 @@ group by s.store_id
 -- 20. Find pairs of actors that participated together in the same movie and print their full names. Each such pair should appear only once in the result. (You should have 10,385 rows in the result)
 -- 21. Display the top five most popular films, i.e., films that were rented the highest number of times. For each film print its title and the number of times it was rented.
 
--- 22a. Display the first and last names of all actors from the table actor.
--- 22b. Display the first and last name of each actor in a single column in upper case letters. Name the column Actor Name.
+
+-- 22. Display the first and last name of each actor in a single column in upper case letters. Name the column Actor Name.
+select Upper(concat(first_name ," ", last_name)) as Actor_Name from actor 
 
 -- 23a. Find the ID number, first name, and last name of an actor, of whom you know only the first name, "Joe."
+select actor_id,first_name, last_name  from actor where first_name='Joe';
+
 -- 23b. Find all actors whose last name contain the letters GEN.
+select actor_id,first_name, last_name  from actor where last_name like '%GEN%';
+
 -- 23c. Find all actors whose last names contain the letters LI. Order the rows by last name and first name.
+select actor_id,first_name, last_name  from actor where last_name like '%LI%' order by last_name , first_name;
+
 -- 23d. Display the country_id and country of Afghanistan, Bangladesh, and China using IN.
+select country_id, country from country where country in ('Afghanistan', 'Bangladesh', 'China');
 
 -- 24a. Add a column in the table actor named description with data type BLOB.
+alter table actor add column description blob;
+
+select * from actor;
 -- 24b. Delete the description column from the actor table.
+
 
 -- 25a. List the last names of actors, as well as how many actors have that last name.
 -- 25b. List last names of actors and the number of actors who have that last name, but only for names shared by at least two actors.
 -- 25c. Update actor HARPO WILLIAMS who was mistakenly entered as GROUCHO WILLIAMS.
+Update actor set first_name = 'HARPO' where first_name = 'GROUCHO' and last_name = 'WILLIAMS';
+
 -- 25d. Revert the name from HARPO back to GROUCHO if the actor is currently listed as HARPO.
 
 -- 26a. Find the schema (CREATE statement) of the address table.
 
 -- 27a. Use JOIN to display the first and last names, as well as the address, of each staff member.
+select from st
+
 -- 27b. Use JOIN to display the total amount rung up by each staff member in August of 2005.
 -- 27c. List each film and the number of actors who are listed for that film.
 -- 27d. How many copies of the film *Hunchback Impossible* exist in the inventory system?
 -- 27e. List the total paid by each customer, ordered by last name.
 
 -- 28a. Display titles of movies starting with the letters K and Q whose language is English using subqueries.
+
 -- 28b. Display all actors who appear in the film *Alone Trip* using subqueries.
+select first_name, last_name, actor_id from actor  in (select title from film where title='Alone Trip';)
+
 -- 28c. Retrieve the names and email addresses of all Canadian customers for a marketing campaign.
 -- 28d. Identify all movies categorized as Family films.
 -- 28e. Display the most frequently rented movies in descending order.

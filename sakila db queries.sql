@@ -54,6 +54,11 @@ from rental r where r.inventory_id = i.inventory_id and r.return_date is null);
 -- 8. Insert a record to represent Mary Smith renting ‘Academy Dinosaur’ from Mike Hillyer at Store 1 today.
 
 -- 9. When is ‘Academy Dinosaur’ due?
+#Finding the film id first
+select * from film where title = 'Academy Dinosaur';
+
+
+
 
 -- 10. What is the average running time of all the films in the sakila DB?
 select avg(rental_duration) from film;
@@ -107,7 +112,7 @@ alter table actor add column description blob;
 
 select * from actor;
 -- 24b. Delete the description column from the actor table.
-
+alter table actor drop column description;
 
 -- 25a. List the last names of actors, as well as how many actors have that last name.
 -- 25b. List last names of actors and the number of actors who have that last name, but only for names shared by at least two actors.

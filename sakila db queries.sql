@@ -6,6 +6,7 @@ select * from address;
 select * from category;
 select * from city;
 select * from country;
+select * from customer;
 select * from film;
 select * from film_actor;
 select * from film_category;
@@ -54,7 +55,7 @@ from rental r where r.inventory_id = i.inventory_id and r.return_date is null);
 -- 8. Insert a record to represent Mary Smith renting ‘Academy Dinosaur’ from Mike Hillyer at Store 1 today.
 
 
-
+1111111
 -- 9. When is ‘Academy Dinosaur’ due?
 #Finding the film id first
 select * from film where title = 'Academy Dinosaur';
@@ -86,14 +87,23 @@ select count(*) from film f join inventory i on f.film_id = i.film_id where f.ti
 
 
 -- 17. Calculate the total revenue of each store.
-select s.store_id,sum(p.amount)
+select s.store_id,sum(p.amount) as revenue
 from payment p join staff st on p.staff_id= st.staff_id 
      join store s on st.store_id= s.store_id
 group by s.store_id   
-  
+ 
+111111 
 -- 20. Find pairs of actors that participated together in the same movie and print their full names. Each such pair should appear only once in the result. (You should have 10,385 rows in the result)
--- 21. Display the top five most popular films, i.e., films that were rented the highest number of times. For each film print its title and the number of times it was rented.
+select fa1.actor_id as actor_id1,fa1.actor_id as actor_id1 , fa1.film_id 
+from film_actor fa1 
+join film_actor fa2 on fa1.film_id > fa2.film_id
 
+-- 21. Display the top five most popular films, i.e., films that were rented the highest number of times. For each film print its title and the number of times it was rented.
+select i.film_id, f.title, count(i.inventory_id) as rental_count 
+from rental r 
+join inventory i on r.inventory_id= i.inventory_id 
+join film f on f.film_id = i.film_id 
+group by i.film_id, f.title order by rental_count desc;
 
 -- 22. Display the first and last name of each actor in a single column in upper case letters. Name the column Actor Name.
 select Upper(concat(first_name ," ", last_name)) as Actor_Name from actor 
@@ -136,23 +146,55 @@ update actor set first_name ='GROUCHO' where first_name= 'HARPO' and last_name =
 
 #27.
 -- 27a. Use JOIN to display the first and last names, as well as the address, of each staff member.
-select from st
+select s.first_name,s.last_name,a.* from staff s join address a on a.address_id= s.address_id
+
+11 label store / staff add.
 
 -- 27b. Use JOIN to display the total amount rung up by each staff member in August of 2005.
 -- 27c. List each film and the number of actors who are listed for that film.
 -- 27d. How many copies of the film *Hunchback Impossible* exist in the inventory system?
+
 -- 27e. List the total paid by each customer, ordered by last name.
+select c.first_name, c.last_name, sum(p.amount) as amount
+from customer c 
+join payment p on c.customer_id= p.customer_id group by c.first_name, c.last_name 
+order by c.last_name desc;
 
 -- 28a. Display titles of movies starting with the letters K and Q whose language is English using subqueries.
+
 
 -- 28b. Display all actors who appear in the film *Alone Trip* using subqueries.
 select first_name, last_name, actor_id from actor  in (select title from film where title='Alone Trip';)
 
 -- 28c. Retrieve the names and email addresses of all Canadian customers for a marketing campaign.
+select cu.first_name, cu.last_name, cu.email
+from customer cu  
+join address a     on cu.address_id= a.address_id
+join city c        on a.city_id= c.city_id
+join country co    on c.country_id= co.country_id 
+where co.country='Canada';
+
 -- 28d. Identify all movies categorized as Family films.
+select f.film_id , f.title
+from film f 
+join film_category fc on f.film_id = fc.film_id
+join category c on fc.category_id = c.category_id where c.name='Family'
+
 -- 28e. Display the most frequently rented movies in descending order.
+
 -- 28f. Display how much business, in dollars, each store brought in.
--- 28g. Display for each store: its store ID, city, and country.
+ select s.store_id, sum(p.amount) as revenue
+ from store s 
+  join staff st on s.store_id =st.store_id
+  join payment p on  st.staff_id=p.staff_id
+  group by  s.store_id
+  
+  -- 28g. Display for each store: its store ID, city, and country.
+ select s.store_id, c.city,co.country 
+ from store s 
+  join address a on s.address_id = a.address_id
+  join city c on a.city_id= c.city_id
+  join country co on c.country_id = co.country_id;
 -- 28h. List the top five genres in gross revenue in descending order.
 
 -- 29a. Create a view to show the top five genres by gross revenue.

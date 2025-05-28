@@ -53,12 +53,12 @@ from rental r where r.inventory_id = i.inventory_id and r.return_date is null);
 
 -- 8. Insert a record to represent Mary Smith renting ‘Academy Dinosaur’ from Mike Hillyer at Store 1 today.
 
+
+
 -- 9. When is ‘Academy Dinosaur’ due?
 #Finding the film id first
 select * from film where title = 'Academy Dinosaur';
-
-
-
+ 
 
 -- 10. What is the average running time of all the films in the sakila DB?
 select avg(rental_duration) from film;
@@ -76,7 +76,10 @@ from film f join film_actor fa on f.film_id= fa.film_id
 join actor a on a.actor_id= fa.actor_id where f.title= "Academy Dinosaur";
 
 -- 14. How many copies of the film ‘Hunchback Impossible’ exist in the inventory system? 
+select count(*) from film f join inventory i on f.film_id = i.film_id where f.title= 'Hunchback Impossible';
+
 -- 15. What is the total amount paid by each customer for all their rentals? For each customer print their name and the total amount paid.
+
 -- 16. How many films from each category each store has? 
 --     Print the store id, category name and number of films. Order the results by store id and category name.
 
@@ -107,22 +110,31 @@ select actor_id,first_name, last_name  from actor where last_name like '%LI%' or
 -- 23d. Display the country_id and country of Afghanistan, Bangladesh, and China using IN.
 select country_id, country from country where country in ('Afghanistan', 'Bangladesh', 'China');
 
+
+#24.
 -- 24a. Add a column in the table actor named description with data type BLOB.
 alter table actor add column description blob;
 
-select * from actor;
+select * from actor ;
 -- 24b. Delete the description column from the actor table.
 alter table actor drop column description;
 
+#25.
 -- 25a. List the last names of actors, as well as how many actors have that last name.
+select last_name, count(last_name) as count_lastname from actor group by last_name order by count_lastname desc; 
 -- 25b. List last names of actors and the number of actors who have that last name, but only for names shared by at least two actors.
+select last_name, count(last_name) as count_lastname from actor
+ group by last_name having  count(last_name)>=2 order by count_lastname desc; 
 -- 25c. Update actor HARPO WILLIAMS who was mistakenly entered as GROUCHO WILLIAMS.
-Update actor set first_name = 'HARPO' where first_name = 'GROUCHO' and last_name = 'WILLIAMS';
-
+Update actor set first_name = 'HARPO' where first_name = 'GROUCHO' and last_name = 'WILLIAMS'; #If last_nam condition is not written it will update all 'HARPO'
 -- 25d. Revert the name from HARPO back to GROUCHO if the actor is currently listed as HARPO.
+update actor set first_name ='GROUCHO' where first_name= 'HARPO' and last_name = 'WILLIAMS';  
 
--- 26a. Find the schema (CREATE statement) of the address table.
 
+-- 26 Find the schema (CREATE statement) of the address table.
+
+
+#27.
 -- 27a. Use JOIN to display the first and last names, as well as the address, of each staff member.
 select from st
 

@@ -25,6 +25,10 @@ Contains a variety of SQL questions across topics like joins, aggregation, subqu
   9th may- ...   
     
 • Currently solving questions on Sakila db (default database in mysql).  
+Sakila db Schema:
+
+![Sakila db Schema](https://github.com/user-attachments/assets/fec5d90d-acf8-4431-afec-1ae531c148d3)
+
  
 I plan to keep adding more queries that I find interesting.     
 

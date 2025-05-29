@@ -53,7 +53,16 @@ from rental r where r.inventory_id = i.inventory_id and r.return_date is null);
 # Check if the copy is currently rented. No return date means not returned yet so NOT AVAILABLE FOR RENT now
 
 
+11111111
 -- 8. Insert a record to represent Mary Smith renting ‘Academy Dinosaur’ from Mike Hillyer at Store 1 today.
+# Check customer_id for Mary Smith is 1 ,  staff_if of Mike Hillyer is 1 , film id fot title ‘Academy Dinosaur’ is 1.
+
+insert into rental ( rental_date, inventory_id, customer_id, return_date, staff_id,last_update)
+values             ();
+select * from customer;
+select * from staff;
+select * from rental;
+select * from film;
 
 
 1111111
@@ -68,6 +77,7 @@ where title = 'Academy Dinosaur' order by r.rental_date desc;
 
 -- 10. What is the average running time of all the films in the sakila DB?
 select avg(length) as avg_runtime from film;
+
 
 -- 11. What is the average running time of films by category?
 select avg(f.length) as avg_time, c.name 
@@ -163,13 +173,24 @@ update actor set first_name ='GROUCHO' where first_name= 'HARPO' and last_name =
 select s.first_name,s.last_name,a.* from staff s join address a on a.address_id= s.address_id
 11111 label store / staff add.
 
--- 27b. Use JOIN to display the total amount rung up by each staff member in August of 2005.
 
+-- 27b. Use JOIN to display the total amount rung up by each staff member in August of 2005.
+select s.staff_id, sum(p.amount) as total_amount
+from staff s
+join payment p on s.staff_id= p.staff_id 
+where year(p.payment_date)= 2005 and month(p.payment_date)=8
+group by s.staff_id ; 
+
+select * from payment;
 -- 27c. List each film and the number of actors who are listed for that film.
 select f.title, count(fa.actor_id) as actor_count from film f 
 join film_actor fa on f.film_id= fa.film_id group by f.film_id,f.title;
 
 -- 27d. How many copies of the film *Hunchback Impossible* exist in the inventory system?
+select count(*)
+from film f 
+join inventory i on f.film_id= i.film_id 
+where f.title='Hunchback Impossible';
 
 -- 27e. List the total paid by each customer, ordered by last name.
 select c.first_name, c.last_name, sum(p.amount) as amount
@@ -178,11 +199,18 @@ join payment p on c.customer_id= p.customer_id group by c.first_name, c.last_nam
 order by c.last_name desc;
 
 -- 28a. Display titles of movies starting with the letters K and Q whose language is English using subqueries.
-
+select title 
+from film 
+where (title like 'K%' or title like 'Q%' )
+and language_id in 
+          (select language_id from language where name='English')
 
 -- 28b. Display all actors who appear in the film *Alone Trip* using subqueries.
-select first_name, last_name, actor_id 
-from actor in (select title from film where title='Alone Trip';)
+select fa.actor_id, a.first_name, a.last_name
+from film_actor fa 
+join actor a on a.actor_id= fa.actor_id
+where fa.film_id in 
+(select film_id from film where title ='Alone Trip')
 
 -- 28c. Retrieve the names and email addresses of all Canadian customers for a marketing campaign.
 select cu.first_name, cu.last_name, cu.email
@@ -216,7 +244,24 @@ join category c on fc.category_id = c.category_id where c.name='Family'
 -- 28g. List the top five genres in gross revenue in descending order.
 
 
+# VIEWS
+SHOW FULL TABLES WHERE TABLE_TYPE = 'VIEW';
+
+select * from actor_info;
+select * from customer_list;
+select * from film_list;
+select * from nicer_but_slower_film_list;
+select * from sales_by_film_category;
+select * from sales_by_store;
+select * from staff_list;
+
+-- Create all the above view again acc to understanding.
 
 -- 29a. Create a view to show the top five genres by gross revenue.
 -- 29b. Display the view created in 29a.
 -- 29c. Drop the view created in 29a if no longer needed.
+
+
+#Self join qns
+#Views
+#timestamp funcs

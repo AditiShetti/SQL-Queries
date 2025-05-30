@@ -53,14 +53,15 @@ from rental r where r.inventory_id = i.inventory_id and r.return_date is null);
 # Check if the copy is currently rented. No return date means not returned yet so NOT AVAILABLE FOR RENT now
 
 
-11111111
 -- 8. Insert a record to represent Mary Smith renting ‘Academy Dinosaur’ from Mike Hillyer at Store 1 today.
 # Check customer_id for Mary Smith is 1 ,  staff_if of Mike Hillyer is 1 , film id fot title ‘Academy Dinosaur’ is 1.
 
-insert into rental ( rental_date, inventory_id, customer_id, return_date, staff_id,last_update)
-values             ();
+insert into rental ( rental_date, inventory_id, customer_id, staff_id)
+values   (NOW(),1,1,1);
+select * from rental order by rental_id desc;
+
 select * from customer;
-select * from staff;
+select * from staff ;
 select * from rental;
 select * from film;
 
@@ -106,7 +107,12 @@ order by amount desc;
 
 -- 16. How many films from each category each store has? 
 --     Print the store id, category name and number of films. Order the results by store id and category name.
-
+select s.store_id, c.name , count() 
+from category c
+join film_category fc on c.category_id = fc.category_id
+join film          f on fc.film_id = f.film_id
+join inventory     i on f.film_id = i.film_id 
+join store         s on i.store_id = s.store_id;
 
 
 -- 17. Calculate the total revenue of each store.
@@ -166,12 +172,16 @@ update actor set first_name ='GROUCHO' where first_name= 'HARPO' and last_name =
 
 
 -- 26 Find the schema (CREATE statement) of the address table.
+describe address;
+show create table address;
 
 
 #27.
 -- 27a. Use JOIN to display the first and last names, as well as the address, of each staff member.
-select s.first_name,s.last_name,a.* from staff s join address a on a.address_id= s.address_id
-11111 label store / staff add.
+select s.first_name,s.last_name,a.* 
+from staff s 
+join address a on a.address_id= s.address_id;
+
 
 
 -- 27b. Use JOIN to display the total amount rung up by each staff member in August of 2005.
@@ -242,6 +252,14 @@ join category c on fc.category_id = c.category_id where c.name='Family'
   join country co on c.country_id = co.country_id;
   
 -- 28g. List the top five genres in gross revenue in descending order.
+select c.name, sum(p.amount) as revenue
+from category c
+join film_category fc on c.category_id= fc.category_id
+join film f           on fc.film_id= f.film_id
+join inventory i      on f.film_id= i.film_id
+join rental r         on i.inventory_id= r.inventory_id
+join payment p        on r.rental_id= p.rental_id
+group by c.name,c.category_id order by sum(p.amount) desc limit 5;
 
 
 # VIEWS
@@ -258,10 +276,28 @@ select * from staff_list;
 -- Create all the above view again acc to understanding.
 
 -- 29a. Create a view to show the top five genres by gross revenue.
+create or replace view top_5_genres_revenue as
+(select c.name, sum(p.amount) as revenue
+from category c
+join film_category fc on c.category_id= fc.category_id
+join film f           on fc.film_id= f.film_id
+join inventory i      on f.film_id= i.film_id
+join rental r         on i.inventory_id= r.inventory_id
+join payment p        on r.rental_id= p.rental_id
+group by c.name,c.category_id order by sum(p.amount) desc limit 5)
+
+select * from top_5_genres_revenue
+show full tables where table_type= 'VIEW';
+
 -- 29b. Display the view created in 29a.
+select * from top_5_genres_revenue
+
 -- 29c. Drop the view created in 29a if no longer needed.
+drop view top_5_genres_revenue;
 
 
-#Self join qns
-#Views
-#timestamp funcs
+
+# Self join qns
+# Views. Create the views again . Perform view operations.
+# timestamp funcs
+# label address as store / staff add.

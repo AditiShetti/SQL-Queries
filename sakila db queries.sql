@@ -41,6 +41,45 @@ join film_actor as f on a.actor_id= f.actor_id
 group by f.actor_id
 order by count(f.actor_id) desc limit 1
 
+
+-- Third most busy actor. Write a query to find the full name of the actor who has acted in the third most number of movies.
+select a.actor_id,concat(a.first_name," ",a.last_name ) as full_name ,count(f.actor_id) as film_count
+from actor as a 
+join film_actor as f on a.actor_id= f.actor_id
+group by f.actor_id
+order by count(f.actor_id) desc limit 1 offset 2;
+
+
+-- Highest grossing film. 
+
+
+-- Customers from a particular category
+
+
+-- Customers from specific countries.
+select cu.customer_id, cu.first_name, cu.last_name, co.country 
+from customer cu
+join address a on cu.address_id = a.address_id
+join city c on a.city_id =  c.city_id
+join country co on c.country_id= co.country_id where co.country in ( 'India','Argentina','Vietnam' ); 
+
+select * from city join country on city.country_id = country.country_id order by country desc
+
+select distinct(country) from country
+
+-- Category of films in diff cities. 
+
+ 
+-- List all films of a particular category in alphabetical order.  
+
+
+-- Particular thing in description.  
+
+
+-- Month with most paymenst .  
+
+
+
 -- 7. Is ‘Academy Dinosaur’ available for rent from Store 1?
 select i.*
 from film f 
@@ -76,7 +115,7 @@ select f.film_id,f.title,r.rental_id, r.rental_date, r.return_date, f.rental_dur
 from film  f  
 join inventory i  on f.film_id= i.film_id
 join rental r     on i.inventory_id= r.inventory_id
-where title = 'Academy Dinosaur' order by r.rental_date desc limit 1;
+where title = 'Academy Dinosaur' order by r.rental_date desc limit 1; 
  
 
 -- 10. What is the average running time of all the films in the sakila DB?
@@ -340,8 +379,12 @@ from customer cu
 join address a on cu.address_id = a.address_id
 join city c on   a.city_id = c.city_id group by c.city order by count(*) desc;
 
-
-
+-- 32. Count of Language 
+select l.name , count(f.film_id)
+from language l join film f on l.language_id = f.language_id
+group by l.name ;
+select * from language
+select distinct(language_id) from film
 
 # timestamp funcs
 # label address as store / staff add.

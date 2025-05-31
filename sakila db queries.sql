@@ -327,5 +327,22 @@ on a1.last_name = a2.last_name
 and a1.actor_id > a2.actor_id 
 
 
+-- 30. List all customers who have never rented a movie. 
+select customer_id
+from customer where customer_id not in (select customer_id from rental)
+
+select * from customer c left join rental r on c.customer_id= r.customer_id where r.customer_id is null ; 
+
+
+-- 31. For each city, show the total number of customers living there. Sort the result by the number of customers, highest first.
+select count(*), c.city
+from customer cu
+join address a on cu.address_id = a.address_id
+join city c on   a.city_id = c.city_id group by c.city order by count(*) desc;
+
+
+
+
 # timestamp funcs
 # label address as store / staff add.
+

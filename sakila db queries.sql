@@ -67,13 +67,16 @@ select * from city join country on city.country_id = country.country_id order by
 
 select distinct(country) from country
 
+
 -- Category of films in diff cities. 
 
- 
+
+  
 -- List all films of a particular category in alphabetical order.  
 
 
 -- Particular thing in description.  
+select * from film where description like '%mad%'
 
 
 -- Month with most paymenst .  

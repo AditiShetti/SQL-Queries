@@ -22,17 +22,22 @@ select * from store;
 -- 1. Which actors have the first name ‘Scarlett’
 select * from actor where first_name ='Scarlett';
 
+
 -- 2. Which actors have the last name ‘Johansson’
 select * from actor where last_name ='Johansson';
+
 
 -- 3. How many distinct actors last names are there?
 select count(distinct(last_name)) from actor ;
 
+
 -- 4. Which last names are not repeated?
 select last_name , count(*) as count_lastnames from actor group by last_name having count(*)=1;
 
+
 -- 5. Which last names appear more than once?
 select last_name,count(*) as count_lastname from actor group by last_name having count(*)>1;
+
 
 -- 6.  Which actor participated in the most films? Print their full name and in how many movies they participated.
 select a.actor_id,a.first_name , a.last_name , count(f.actor_id) as film_count
@@ -51,6 +56,12 @@ order by count(f.actor_id) desc limit 1 offset 2;
 
 
 -- Highest grossing film. 
+select f.title , sum(p.amount) as revenue
+from film f 
+join inventory i on f.film_id= i.film_id
+join rental r on i.inventory_id= r.inventory_id
+join payment p on r.rental_id= p.rental_id
+group by f.title order by sum(p.amount) desc limit 1;
 
 
 -- Customers from a particular category
@@ -68,11 +79,19 @@ select * from city join country on city.country_id = country.country_id order by
 select distinct(country) from country
 
 
+-- Cities which contain vowels at the end
+select * from city where city like '%a' or city like '%e' or city like '%i' or city like '%o' or city like '%u';
+
+1111111
+select * from city where city regexp '[aeiou]$';
+
 -- Category of films in diff cities. 
 
 
   
 -- List all films of a particular category in alphabetical order.  
+
+
 
 
 -- Particular thing in description.  

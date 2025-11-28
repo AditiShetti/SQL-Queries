@@ -37,7 +37,11 @@ Contains a variety of SQL questions across topics like joins, aggregation, subqu
 **Sakila db Schema:**
 ![Sakila db Schema](https://github.com/user-attachments/assets/fec5d90d-acf8-4431-afec-1ae531c148d3)
 
- 
+
+ https://www.sql-practice.online/
+I am practising on this website. This has comany wise, and diff types of cases too.  
+
+
 I plan to keep adding more queries that I find interesting.     
 
 😊😊  

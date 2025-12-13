@@ -40,6 +40,7 @@ Contains a variety of SQL questions across topics like joins, aggregation, subqu
 
  https://www.sql-practice.online/  
 I am practising on this website. This has comany wise, and diff types of cases too.    
+Has HR , E-Commerce ans school database schema .  
 
   
 I plan to keep adding more queries that I find interesting.     

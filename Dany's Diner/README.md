@@ -14,31 +14,40 @@
 # Questions:   
 
 1. What is the total amount each customer spent at the restaurant?
-
+<img width="204" height="100" alt="image" src="https://github.com/user-attachments/assets/f38cd34d-f532-4aca-b251-91367e28060b" />  
 
   
 2. How many days has each customer visited the restaurant?
+<img width="188" height="85" alt="image" src="https://github.com/user-attachments/assets/5bbefcdf-05b3-4609-86f2-f2630b7262d9" />  
 
    
 3. What was the first item from the menu purchased by each customer?
+<img width="296" height="122" alt="image" src="https://github.com/user-attachments/assets/c0f8f052-8f6e-43a2-aca7-48bd4bc909f0" />  
 
    
 4. What is the most purchased item on the menu and how many times was it purchased by all customers?
+<img width="219" height="95" alt="image" src="https://github.com/user-attachments/assets/e78bdc9d-3a54-47fa-9ca3-21533e7f3f3a" />  
 
-   
+
 5. Which item was the most popular for each customer?
+<img width="320" height="146" alt="image" src="https://github.com/user-attachments/assets/fd656441-be9d-41c0-af28-4ae89dc4b449" />  
 
    
 6. Which item was purchased first by the customer after they became a member?
+<img width="211" height="75" alt="image" src="https://github.com/user-attachments/assets/4bfa09cc-8734-4591-bfe4-518318ae0899" />  
 
     
 7. Which item was purchased just before the customer became a member?
+<img width="210" height="77" alt="image" src="https://github.com/user-attachments/assets/a31b9124-d2b9-4adc-948d-70b495c52efa" />  
 
-    
+
 8. What is the total items and amount spent for each member before they became a member?
+<img width="273" height="76" alt="image" src="https://github.com/user-attachments/assets/e5824755-f521-46df-8b39-5b0d7f41ef3c" />  
 
     
 9. If each $1 spent equates to 10 points and sushi has a 2x points multiplier, how many points would each customer have?
-    
+    <img width="189" height="98" alt="image" src="https://github.com/user-attachments/assets/73256e19-d4b1-401e-a7f2-c65703e89943" />  
+
     
 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi. How many points do customer A and B have at the end of January?
+<img width="606" height="353" alt="image" src="https://github.com/user-attachments/assets/4087f890-eabb-4dd7-ac26-288e8e99e155" />  

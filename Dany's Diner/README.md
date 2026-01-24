@@ -4,7 +4,6 @@ Dany's Diner (Case Sudy 1) with Questions and output.
 
 
 1. What is the total amount each customer spent at the restaurant?
-``` sql
 customer_id	order_date	product_id
 A	1/1/2021	1
 A	1/1/2021	2
@@ -22,7 +21,6 @@ C	1/1/2021	3
 C	1/1/2021	3
 C	1/7/2021	3
 
-```
   
 2. How many days has each customer visited the restaurant?
 

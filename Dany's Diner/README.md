@@ -11,6 +11,7 @@
 <img width="251" height="97" alt="image" src="https://github.com/user-attachments/assets/289a1f7c-21dc-4921-9788-2a22ecad3e05" />  
 
 
+# Questions:   
 
 1. What is the total amount each customer spent at the restaurant?
 

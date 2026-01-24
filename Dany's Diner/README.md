@@ -21,8 +21,6 @@ B	2/1/2021	3
 C	1/1/2021	3
 C	1/1/2021	3
 C	1/7/2021	3
-<img width="272" height="385" alt="image" src="https://github.com/user-attachments/assets/4c15725e-1c41-4302-9aaf-7735a13b0400" />
-
 
 ```
   

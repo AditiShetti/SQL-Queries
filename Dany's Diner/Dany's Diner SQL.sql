@@ -35,7 +35,7 @@ VALUES
   ('2', 'curry', '15'),
   ('3', 'ramen', '12');
   
--- mwmbers table 
+-- members table 
 create table members(
 customer_id varchar (1),
 join_date date)
@@ -45,20 +45,22 @@ VALUES
   ('A', '2021-01-07'),
   ('B', '2021-01-09');
   
-
-
+  
 -- 1. What is the total amount each customer spent at the restaurant?
 select s.customer_id, sum(m.price) as total_amount
 from menu as m join sales as s 
 on m.product_id= s.product_id
 group by s.customer_id;
 
+
 -- 2. How many days has each customer visited the restaurant?
 select members.customer_id, count(distinct(order_date)) as visit_count
 from sales join members on sales.customer_id= members.customer_id
 group by members.customer_id;
 
--- 3. What was the first item from the menu purchased by each customer? 
+
+-- 3. What was the first item from the menu purchased by each customer?  
+-- dense rank because multiple items were ordered on the same day. We dont have time given to rank one above the other
  with cte as 
 (select customer_id, order_date, product_name,
  dense_rank() over (partition by customer_id ORDER BY order_date) as dense_r
@@ -69,6 +71,7 @@ select customer_id, order_date,product_name
 from cte where dense_r= 1
 group by customer_id, order_date,product_name;
 
+
 -- 4. What is the most purchased item on the menu and how many times was it purchased by all customers? 
 select menu.product_name,count(sales.product_id)as highest_count
 from sales
@@ -76,42 +79,47 @@ join menu on sales.product_id = menu.product_id
 group by  menu.product_name
 order by highest_count desc;
 
-******
--- 5. Which item was the most popular for each customer?
-select sales.customer_id,count(sales.product_id) as highest_count
+
+-- 5. Which item was the most popular for each customer? max(count) aggreagate over aggregates doesnt work.
+-- Dense_rank beacuse a customer can have mulyiple most ordered items.
+with cte as 
+(select  sales.customer_id,
+		menu.product_name,
+        count(sales.product_id) as product_count,
+dense_rank() over(partition by customer_id order by count(sales.product_id) desc) as popular_item
 from sales
 join menu on sales.product_id = menu.product_id
-where count(sales.product_id)= max(count(sales.product_id))
-group by  sales.customer_id, menu.product_name
-order by highest_count desc;
-
-with cte as (select sales.customer_id,menu.product_name,count(sales.product_id) as highest_count
-from sales
-join menu on sales.product_id = menu.product_id
-group by sales.customer_id,menu.product_name
-order by sales.customer_id,highest_count desc)
-select customer_id,product_name,highest_count
-from cte
-where highest_count= max(highest_count)
-group by customer_id
-;
+group by sales.customer_id,menu.product_name)
+select customer_id, product_name, product_count
+from cte  
+where popular_item= 1;
 
 
-select current_date()
-select day
 
-**
+
+
 -- 6. Which item was purchased first by the customer after they became a member?
-select me.customer_id, order_date,s.product_id, m.product_name,
- rank() over(partition by me.customer_id,s.order_date order by me.customer_id) as rankk
+with cte as
+(select me.customer_id, order_date,me.join_date,s.product_id, m.product_name,
+ row_number() over(partition by me.customer_id order by s.order_date) as rankk
 from sales s
 join members me on s.customer_id= me.customer_id and order_date > join_date 
-join menu m  on m.product_id= s.product_id
-
-select * from sales
+join menu m on m.product_id= s.product_id)
+select customer_id,product_name
+from cte
+where rankk=1;
 
 
 -- 7. Which item was purchased just before the customer became a member?
+select customer_id, product_name
+from
+(select s.customer_id, s.order_date, me.join_date, m.product_name,
+row_number() over(partition by me.customer_id order by order_date desc) as rn
+from sales s
+join members me on s.customer_id= me.customer_id
+join menu m on s.product_id= m.product_id
+where order_date< join_date) a 
+where rn=1;
 
 
 -- 8. What is the total items and amount spent for each member before they became a member?
@@ -137,4 +145,17 @@ select customer_id, sum(points) as total_points
 from cte
 group by customer_id;
 
--- 10. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?  
+
+-- 10. In the first week after a customer joins the program (including their join date) 
+-- they earn 2x points on all items, not just sushi
+-- how many points do customer A and B have at the end of January?  
+select s.customer_id, 
+		s.product_id, 
+        s.order_date , 
+        m.price,
+    date_add(s.order_date, interval 6 day) as first_week_after_joining,
+    case 
+		when s.order_date between s.order_date and date_add(s.order_date, interval 7 day) then price*2 
+    else price 
+    end as new_sale_amt
+from sales s join menu m on s.product_id= m.product_id;

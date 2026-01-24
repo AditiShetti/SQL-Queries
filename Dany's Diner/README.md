@@ -1,25 +1,18 @@
 
 Dany's Diner (Case Sudy 1) with Questions and output.
 
+Sales Table:  
+<img width="276" height="349" alt="image" src="https://github.com/user-attachments/assets/f83a9711-5215-49f5-8b7f-9443b3ed8c57" />  
+
+Members Table:  
+<img width="195" height="79" alt="image" src="https://github.com/user-attachments/assets/1f8ba2ef-b20f-499b-b721-c75bcb1bd66e" />  
+
+Menu Table:
+<img width="251" height="97" alt="image" src="https://github.com/user-attachments/assets/289a1f7c-21dc-4921-9788-2a22ecad3e05" />  
 
 
 1. What is the total amount each customer spent at the restaurant?
-customer_id	order_date	product_id
-A	1/1/2021	1
-A	1/1/2021	2
-A	1/7/2021	2
-A	1/10/2021	3
-A	1/11/2021	3
-A	1/11/2021	3
-B	1/1/2021	2
-B	1/2/2021	2
-B	1/4/2021	1
-B	1/11/2021	1
-B	1/16/2021	3
-B	2/1/2021	3
-C	1/1/2021	3
-C	1/1/2021	3
-C	1/7/2021	3
+
 
   
 2. How many days has each customer visited the restaurant?

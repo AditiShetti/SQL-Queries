@@ -45,7 +45,11 @@ VALUES
   ('A', '2021-01-07'),
   ('B', '2021-01-09');
   
+|   |   |
+|   |   |  
   
+
+
 -- 1. What is the total amount each customer spent at the restaurant?
 select s.customer_id, sum(m.price) as total_amount
 from menu as m join sales as s 

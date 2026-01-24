@@ -4,7 +4,7 @@ Dany's Diner (Case Sudy 1) with Questions and output.
 
 
 1. What is the total amount each customer spent at the restaurant?
-```` sql
+``` sql
 A	1	2021-01-01	10	2021-01-07	20
 A	2	2021-01-01	15	2021-01-07	30
 A	2	2021-01-07	15	2021-01-13	30
@@ -20,7 +20,7 @@ B	3	2021-02-01	12	2021-02-07	24
 C	3	2021-01-01	12	2021-01-07	24
 C	3	2021-01-01	12	2021-01-07	24
 C	3	2021-01-07	12	2021-01-13	24
-````
+```
   
 2. How many days has each customer visited the restaurant?
 

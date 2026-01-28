@@ -23,7 +23,7 @@ VALUES
 (6536, 115, 57.00, '2022-07-12 10:00:00'),
 (7384, 159, 15.50, '2022-07-12 10:00:00'),
 (1247, 159, 23.40, '2022-07-12 10:00:00');  
-
+select * from transactions;
 -- transaction date,user id, total products
 with cte as 
 (select product_id,
@@ -59,6 +59,10 @@ INSERT INTO reviews (review_id, user_id, submit_date, restaurant_id, rating) VAL
 (1008, 508, '2022-03-05', 102, 2);
 select * from reviews
 
+select restaurant_id, avg(rating) as avg_rating, extract(month from submit_date) as month 
+from reviews 
+group by restaurant_id, month
+
 select month(submit_date) as month,
   avg(rating) as avg_rating,
   restaurant_id
@@ -85,7 +89,6 @@ VALUES
 (3, 2009, 12),
 (11, 2020, 99),
 (7, 2019, 0); 
-
 CREATE TABLE queries (
     id INT,
     year INT
@@ -99,10 +102,19 @@ INSERT INTO queries (id, year) VALUES
 (7, 2020),
 (13, 2019);
 
-select n.npv, q.id, q.year
+select q.*, round(coalesce(n.npv,0),0) as npv  # Coalesce() to map NULL walues to a value
+from queries q                                # Can use IFNULL also 
+left join npv n 
+on n.id= q.id and n.year= q.year
+order by q.id
+
+select q.*, round(ifnull(n.npv,0),0) as npv  
 from queries q
-join npv n on n.id= q.id and n.year= q.year
-order by q.year
+left join npv n 
+on n.id= q.id and n.year= q.year
+order by q.id
+
+-- Using CASE , IF not null then npv else 0
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # FIND SELLERS WHO HAVENT MADE ANY SALE IN 2020
@@ -142,7 +154,7 @@ left join(
           where o.seller_id IS NULL
 
 2. SUBQUERY
-select seller_name
+select seller_name, seller_id
 from sellers
 where seller_id not in 
                       (select seller_id
@@ -158,7 +170,7 @@ CREATE TABLE customer_orders (
     order_date DATE,
     order_amount INT
 );
-select * from customer_orders
+select * from customer_orders;
 INSERT INTO customer_orders (order_id, customer_id, order_date, order_amount) VALUES
 (1, 100, '2022-01-01', 2000),
 (2, 200, '2022-01-01', 2500),
@@ -169,7 +181,26 @@ INSERT INTO customer_orders (order_id, customer_id, order_date, order_amount) VA
 (7, 100, '2022-01-03', 3000),
 (8, 400, '2022-01-03', 1000),
 (9, 600, '2022-01-03', 3000);
-                    
+
+-- using cte WRONG output
+ with cust as
+(
+select count(*) as all_cust, customer_id
+from customer_orders
+group by customer_id 
+),
+final_cust as 
+(
+select customer_id, 
+case when all_cust = 1 then 'new' else 'repeat cust' end as cust_type,
+case when all_cust = 1 then 1 else 0 end as new_cust,
+case when  all_cust != 1 then 1 else 0 end as repeat_cust
+from cust
+)
+select  sum(new_cust), sum(repeat_cust)
+from final_cust
+
+-- diff answers as approach differs     
 with cte1 as(
 select customer_id, min(order_date) as first_visited 
 from customer_orders
@@ -184,6 +215,18 @@ from customer_orders co
  )
 select order_date, sum(first_visit_flag) as new_cust, sum(repeat_visit_flag) as repeat_cust
 from cte2 group by order_date
+
+
+-- using window function
+select * from customer_orders
+
+with window_cust as
+(select customer_id, order_date,
+   row_number() over(partition by customer_id order by order_date) as rn
+from customer_orders)
+select sum(case when rn=1 then 1 else 0 end) as new_cust, 
+       sum(case when rn>1 then 1 else 0 end) as repeat_cust
+from window_cust 
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -234,9 +277,19 @@ INSERT INTO ProductSpend (category, product, user_id, spend) VALUES
 ('home', 'decor', 456, 29.99);
 select * from ProductSpend
 
+
+
+
+select rpad(product, 15, '*') from ProductSpend; 
+
+
+
+ select instr(category,'ics') from ProductSpend
+ 
+ 
 with cte as(
-select category,product, user_id,sum(spend) as total_spend,
-  rank() over(partition by product order by sum(spend) desc) as rank
+select category,product,sum(spend) as total_spend,
+  rank() over(partition by category order by sum(spend) desc) as rn
 from ProductSpend
 group by category,product)
 select category,product, total_spend
@@ -268,7 +321,7 @@ VALUES
 select * from order_details
 
 select del_partner, count(*) as delayed_del
-from order_details where timestampdiff(minute,deliver_time,order_time )> predicted_time
+from order_details where timestampdiff(minute,order_time,deliver_time )> predicted_time
 group by del_partner
 
 select  del_partner,
@@ -287,6 +340,8 @@ salary int
 insert into employee values 
 ('Siva',1,30000),('Ravi',2,40000),('Prasad',1,50000),('Sai',2,20000)
 
+select * from employee
+
 with cte as
 (select *,
  row_number() over(partition by dep_id order by salary desc) as rank_desc,
@@ -295,7 +350,7 @@ from employee)
 select dep_id, salary,
  max(case when rank_desc=1 then emp_name end ) as high_rank,
  max(case when rank_asc=1 then emp_name end ) as low_rank
-from cte group by dep_id
+from cte group by dep_id,salary
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 CHECK THIS
@@ -332,6 +387,8 @@ VALUES
     ('STU901', 'NYC', 'DEL', 'R', 60),
     ('ABC123', 'DEL', 'BOM', 'O', 100),
     ('VWX234', 'DEL', 'NYC', 'R', 90);
+
+select * from tickets
 
 select origin,destination,sum(ticket_count) as tc 
 from 
@@ -422,6 +479,7 @@ values
 (5, '2019-06-02', '2019-10-01', 103500),
 (6, '2019-06-02', '2020-09-02', 103300);
 select * from emp_churn
+
 with cte as(
 select year(end_date) as year_driver_churned , 
  count(empId) as n_churned
@@ -605,6 +663,10 @@ values(1, 'Electronics', '2024-01-10', 100, 80),
     (11, 'Furniture', '2024-03-12', 160, 150),
     (12, 'Furniture', '2024-04-05', 180, 170);
 select * from inventory
+
+select date_format(transaction_date, '%Y-%m') as d
+from inventory
+
 with cte as (
 select category,month(transaction_date) as month, 
   sum(sold_quantity) as total_sold, 
@@ -618,6 +680,50 @@ group by category
 having count(distinct month) = 12;
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- 20th jan 2026
+-- 21st Jan
+
+select now()
+select curdate()
+
+select transaction_date, year(transaction_date) from inventory;
+select transaction_date, month(transaction_date) from inventory;
+select transaction_date, monthname(transaction_date) from inventory;
+
+SELECT
+  order_date,
+  YEAR(order_date)  AS yearr,
+  MONTH(order_date) AS monthh,
+  DAY(order_date)   AS dayy
+FROM sales;
+
+SELECT transaction_date,
+  WEEK(transaction_date, 3) AS iso_week
+FROM inventory;
+
+select transaction_date, day(transaction_date) from inventory;
+select transaction_date, dayname(transaction_date) from inventory;
+select transaction_date, dayofmonth(transaction_date) from inventory;  # dayofmonth/week/year
+
+select transaction_date, week(transaction_date,6) from inventory;
+
+select transaction_date, date_add(transaction_date interval() ) from inventory;
 
 
+SELECt order_date,
+  DATE_ADD(order_date, INTERVAL 7 DAY)  AS plus_7_days,
+  DATE_ADD(order_date, INTERVAL 6 month)  AS plus_6_m,
+  DATE_SUB(order_date, INTERVAL 1 MONTH) AS minus_1_month
+FROM sales;
+
+
+select transaction_date, datediff('2026-01-22',transaction_date) from inventory;
+select transaction_date, timestampadd( month ,'2026-01-22',transaction_date) from inventory;
+
+SELECT DATE_FORMAT('2026-01-22', '%d-%b-%Y') AS nice;  -- 22-Jan-2026
+
+SELECT
+  '2026-01-22' AS d,
+  DAYNAME('2026-01-22') AS day_name,
+  WEEKDAY('2026-01-22') AS weekday_no;  -- 0=Mon ... 6=Sun
 

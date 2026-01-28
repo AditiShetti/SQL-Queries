@@ -45,18 +45,24 @@ VALUES
   ('A', '2021-01-07'),
   ('B', '2021-01-09');
   
-  
+select * from sales;
+select * from members;
+select * from menu;
+ 
+ 
 -- 1. What is the total amount each customer spent at the restaurant?
-select s.customer_id, sum(m.price) as total_amount
+select  s.customer_id, 
+		sum(m.price) as total_amount
 from menu as m join sales as s 
 on m.product_id= s.product_id
 group by s.customer_id;
 
 
 -- 2. How many days has each customer visited the restaurant?
-select members.customer_id, count(distinct(order_date)) as visit_count
-from sales join members on sales.customer_id= members.customer_id
-group by members.customer_id;
+select sales.customer_id, 
+count(distinct(order_date)) as visit_count
+from sales left join members on sales.customer_id= members.customer_id
+group by sales.customer_id;
 
 
 -- 3. What was the first item from the menu purchased by each customer?  
@@ -77,7 +83,8 @@ select menu.product_name,count(sales.product_id)as highest_count
 from sales
 join menu on sales.product_id = menu.product_id
 group by  menu.product_name
-order by highest_count desc;
+order by highest_count desc
+limit 1;
 
 
 -- 5. Which item was the most popular for each customer? max(count) aggreagate over aggregates doesnt work.
@@ -95,9 +102,6 @@ from cte
 where popular_item= 1;
 
 
-
-
-
 -- 6. Which item was purchased first by the customer after they became a member?
 with cte as
 (select me.customer_id, order_date,me.join_date,s.product_id, m.product_name,
@@ -105,7 +109,7 @@ with cte as
 from sales s
 join members me on s.customer_id= me.customer_id and order_date > join_date 
 join menu m on m.product_id= s.product_id)
-select customer_id,product_name
+select customer_id,product_name,order_date,join_date
 from cte
 where rankk=1;
 
@@ -123,7 +127,9 @@ where rn=1;
 
 
 -- 8. What is the total items and amount spent for each member before they became a member?
-select me.customer_id,count(s.product_id) as total_items, sum(m.price) as total_price 
+select me.customer_id,
+		count(s.product_id) as total_items, 
+		sum(m.price) as total_price 
 from sales s
 join members me
 on s.customer_id= me.customer_id 

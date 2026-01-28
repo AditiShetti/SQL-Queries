@@ -18,7 +18,6 @@
 
   
 2. How many days has each customer visited the restaurant?
-<img width="188" height="85" alt="image" src="https://github.com/user-attachments/assets/5bbefcdf-05b3-4609-86f2-f2630b7262d9" />  
 <img width="182" height="104" alt="image" src="https://github.com/user-attachments/assets/b4479854-f006-4f49-9182-040315b11a48" />  
 
    

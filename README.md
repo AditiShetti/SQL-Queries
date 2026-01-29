@@ -45,7 +45,12 @@ Has HR , E-Commerce ans school database schema .
 
 I've started 8 week SQL Case Study.
 So far , I have completed Case 1 - Dany's Diner(Beginner Level - Intermediate level)
-  
+
+
+ ## SQL GAMES:  
+ https://www.sqlnoir.com/cases  
+
+ 
 I plan to keep adding more queries that I find interesting.     
 
 😊😊  

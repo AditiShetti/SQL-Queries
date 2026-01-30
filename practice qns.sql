@@ -727,3 +727,20 @@ SELECT
   DAYNAME('2026-01-22') AS day_name,
   WEEKDAY('2026-01-22') AS weekday_no;  -- 0=Mon ... 6=Sun
 
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+-- Calculate total engagement (posts + comments + likes given) for each user. Show username, total posts, total comments made, total likes given, and total engagement.
+
+WITH cte AS 
+(SELECT users.username, 
+       COUNT(distinct(posts.post_id)) AS total_posts, COUNT(distinct(comments.comment_id)) AS total_comments,
+       COUNT(distinct(likes.like_id)) AS total_likes_given
+FROM users
+left JOIN posts on users.user_id= posts.user_id
+left JOIN comments on users.user_id= comments.user_id
+left JOIN likes on  users.user_id= likes.user_id
+GROUP BY users.username)
+SELECT username, total_posts,total_comments,total_likes_given , 
+      SUM(total_posts+total_comments+total_likes_given) AS total_engagement
+FROM cte  
+GROUP BY username, total_posts,total_comments,total_likes_given
+ORDER BY total_engagement DESC;

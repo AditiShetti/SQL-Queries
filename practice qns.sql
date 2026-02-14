@@ -365,8 +365,11 @@ insert into namaste_python values ('python bootcamp1.txt','python for data analy
 
 select * 
 from namaste_python
-cross apply string_split('content', '') 
+cross apply string_split(content,'') 
 
+
+select substring(content,' ',1)
+from namaste_python
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Find busiest route with highest ticket_count.
 -- Round trip BOM --> DEL and DEL -->BOM is diff .
@@ -412,6 +415,20 @@ with cte as
   from tickets group by origin,destination)
 select origin,destination,tickets_sold 
 from cte order by tickets_sold desc
+
+
+# Stored proc
+DELIMITER $$
+create procedure flight_details(IN flight varchar(10))
+begin
+	select * from tickets
+    where airline_number= flight;
+END $$
+Delimiter ;
+
+CALL flight_details('ABC123')
+
+drop procedure flight_details;
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #AMAZON - find number of employees inside the hospital
@@ -622,6 +639,8 @@ select * from user
 select user_id,user_name, substring(email,1,locate('@',email)-1) as name from user # start at positn 1 and before @
 select user_id,user_name, substring(email,locate('@',email)+1) as domain from user # start at positn @ till the end
 
+
+
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 -- sql statement to show second most recent balance for each account 
 create table account_bal (
@@ -640,6 +659,17 @@ with cte as(select *,
  dense_rank() over (partition by acct_I order by date_I desc) as dr
 from account_bal)
 select acct_I,balance_amt from cte where dr=2
+
+delimiter $$
+create procedure all_acc_details()
+begin
+select * from account_bal;
+end $$
+delimiter ;
+
+call all_acc_details()
+drop procedure all_acc_details;
+
 
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -744,3 +774,82 @@ SELECT username, total_posts,total_comments,total_likes_given ,
 FROM cte  
 GROUP BY username, total_posts,total_comments,total_likes_given
 ORDER BY total_engagement DESC;
+
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+create table trial_students( 
+	stud_id int primary key,
+	fname varchar(10),
+    lname varchar(10),
+    age int)
+
+insert into trial_students 
+values(1, 'adi','rsf', 23),
+(2, 'aar', 'sdffs', 20),
+(3,' har', 'dgsvcxsdfc', 25)
+
+create table trial_dept(s_id int , dept_id int primary key , dept_name varchar(15))
+
+insert into trial_dept 
+values(1, 2, 'elec'),
+(3, 1, 'aiml'),
+(1, 3, 'dig mark')
+
+
+select * from trial_dept
+select * from trial_students
+
+-- FULL OUTER JOIN
+select * 
+from trial_students 
+left join trial_dept on trial_students.stud_id= trial_dept.s_id
+union
+select * 
+from trial_students 
+right join trial_dept on trial_students.stud_id= trial_dept.s_id
+
+-- croos o
+select * 
+from trial_students 
+CROSS join trial_dept on trial_students.stud_id= trial_dept.s_id
+
+select * 
+from trial_students 
+natural join trial_dept on trial_students.stud_id= trial_dept.s_id
+
+---- CLONE A TABLE
+
+Select * from city_copy -- copy table with data
+
+create table city_copy as select * from city
+
+create table city_copy as select * from city-- copy table without data
+ where 1=0
+ 
+ select 'preffff'+ District from city
+ 
+ -----------------------------------------------75 sql qns.
+ -- Q2. customers who have placed exactly 1 order
+with cte as 
+(select  distinct(customer_id),count(*) as no_of_orders
+from orders
+group by customer_id
+having count(*)= 1)
+select sum(no_of_orders) as ordered_once
+from cte
+
+-- Q3. Orders placed on Weekends. (dayname/dayofweek)
+select count(*) as weekend_orders 
+from orders
+where dayname(order_datetime) in ('Sunday','Saturday')
+
+
+with weekend_order_pct as 
+(select count(*) as total_orders, 
+	   sum(case when dayname(order_datetime) in ('Sunday','Saturday') 
+       then 1 else 0 end )
+        as weekend_orders
+from orders)
+select (weekend_orders/total_orders) *100 as weekend_order_pct
+from weekend_order_pct
+

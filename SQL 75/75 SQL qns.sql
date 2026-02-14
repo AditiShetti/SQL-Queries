@@ -3055,3 +3055,48 @@ select * from products;
 select * from returns;
 
 -- Q1. Total registered users vs customers who placed at least 1 order.
+select count(distinct(customers.customer_id)) as total_registered_users ,
+	   count(distinct(orders.customer_id)) as cust_count_with_order
+from customers left join orders on orders.customer_id= customers.customer_id;
+
+with cte as
+(select customers.customer_id as total_registered_users ,
+	   orders.customer_id as cust_count_with_order
+from customers left join orders on orders.customer_id= customers.customer_id
+where orders.customer_id is null)
+select count(*) as no_order_cust
+from cte
+
+
+-- Q2. customers who have placed exactly 1 order
+with cte as 
+(select  distinct(customer_id),count(*) as no_of_orders
+from orders
+group by customer_id
+having count(*)= 1)
+select sum(no_of_orders) as ordered_once
+from cte
+
+-- Q3. Orders placed on Weekends. (dayname/dayofweek)
+select count(*) as weekend_orders 
+from orders
+where dayname(order_datetime) in ('Sunday','Saturday')
+
+
+with weekend_order_pct as 
+(select count(*) as total_orders, 
+	   sum(case when dayname(order_datetime) in ('Sunday','Saturday') 
+       then 1 else 0 end )
+        as weekend_orders
+from orders)
+select (weekend_orders/total_orders) *100 as weekend_order_pct
+from weekend_order_pct
+
+-- Q4. Orders with quantity more than 1 .
+with cte as 
+(select order_id
+from order_items
+where quantity >1
+group by order_id)
+select count(*)
+from cte

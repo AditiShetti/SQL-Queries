@@ -3100,3 +3100,72 @@ where quantity >1
 group by order_id)
 select count(*)
 from cte
+
+-- Q5. Latest order placed by each customer.
+select * from customers;
+select * from orders;
+
+select c.customer_id,first_name,c.city, max(o.order_datetime) as latest_order
+from customers as c
+join orders as o on c.customer_id= o.customer_id       
+group by c.customer_id,first_name,c.city
+order by c.customer_id ;
+
+-- Q6. Customer's latest order with order_id.
+with cte as(
+select c.customer_id,first_name,c.city, o.order_id, o.order_datetime,
+      dense_rank() over(partition by c.customer_id order by o.order_datetime desc) as dense_r
+from customers as c
+join orders as o 
+		on c.customer_id= o.customer_id)
+select *
+from cte
+where dense_r= 1;
+        
+
+-- Q7. Customers who have returned atleast 1 item
+select * from order_items;
+select * from orders;
+select * from returns;
+select * from customers;
+
+
+select c.customer_id,c.first_name, o.order_id, r.order_item_id,  r.reason
+from customers as c
+join orders as o on c.customer_id=o.customer_id
+join order_items as i on o.order_id= i.order_id
+join returns as r on r.order_item_id= i.order_item_id;
+
+
+-- Q8. Segregate the orders into order value categories for each customer according to the order total. 
+-- If total <1000 then 'Low', between 1000 and 5000 as 'Medium' and above 5000 as 'High'.
+select c.customer_id,c.first_name, o.order_id,order_total,
+case when order_total< 1000 then 'Low'
+     when order_total between 1000 and 5000 then 'Medium'
+     else 'High' end as order_categories
+from customers as c
+join orders as o on c.customer_id=o.customer_id; 
+
+-- Q9.Products sold more than the average quantity. 
+
+select product_id, sum(quantity)
+from order_items
+group by product_id
+having sum(quantity)> (select avg(quantity) from order_items)
+
+
+-- for Products sold more than their own average quantity
+
+with cte as
+(SELECT product_id,
+        quantity,
+        AVG(quantity) OVER (PARTITION BY product_id) AS product_avg_qty
+FROM order_items)
+select product_id, quantity, product_avg_qty
+from cte
+where quantity>product_avg_qty;
+
+-- Q10.Total orders and total revenue Monthwise.
+
+select * from order_items
+

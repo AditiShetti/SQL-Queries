@@ -49,7 +49,11 @@ https://8weeksqlchallenge.com/
 
 
  ## SQL GAMES:  
- https://www.sqlnoir.com/cases  
+ https://www.sqlnoir.com/cases    
+ I have solved 3 cases till now.  
+ 1. The Vanishing briefcase.  
+ 2. The stolen sound  
+ 3. The Vanishing diamond.    
 
  
 I plan to keep adding more queries that I find interesting.     

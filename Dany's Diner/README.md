@@ -51,4 +51,8 @@
 
     
 11. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi. How many points do customer A and B have at the end of January?
-<img width="606" height="353" alt="image" src="https://github.com/user-attachments/assets/4087f890-eabb-4dd7-ac26-288e8e99e155" />  
+<img width="606" height="353" alt="image" src="https://github.com/user-attachments/assets/4087f890-eabb-4dd7-ac26-288e8e99e155" />
+
+12. In the first week after a customer joins the program (including their join date) they earn 2x points on all items, not just sushi - how many points do customer A and B have at the end of January?   
+<img width="242" height="85" alt="image" src="https://github.com/user-attachments/assets/aae538a3-45d5-463c-8475-a496388a906c" />
+

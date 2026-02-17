@@ -159,9 +159,14 @@ select s.customer_id,
 		s.product_id, 
         s.order_date , 
         m.price,
-    date_add(s.order_date, interval 6 day) as first_week_after_joining,
+        me.join_date,
+    date_add(me.join_date, interval 6 day) as first_week_after_joining,
     case 
-		when s.order_date between s.order_date and date_add(s.order_date, interval 7 day) then price*2 
-    else price 
+		when s.order_date between me.join_date and date_add(me.join_date, interval 6 day) 
+        then price*20 
+    else price*10 
     end as new_sale_amt
-from sales s join menu m on s.product_id= m.product_id;
+from sales s join menu m on s.product_id= m.product_id
+join members me on me.customer_id= s.customer_id
+where s.order_date <= '2021-01-31';
+

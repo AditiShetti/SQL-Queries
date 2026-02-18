@@ -3201,3 +3201,79 @@ order by paymtype_pct desc;
 select 7/75*100
 
 -- Q13. Customers who signed up but never ordered.
+
+select c.customer_id, c.first_name, c.city, o.customer_id
+from customers c
+left join orders o on o.customer_id= c.customer_id 
+where o.customer_id is null
+
+-- Q14. Find top 5 cities by total order value.
+select shipping_city, sum(order_total) as citywise_revenue
+from orders
+group by shipping_city
+order by citywise_revenue desc
+limit 5;
+
+with cte as 
+(select shipping_city, sum(order_total) as citywise_revenue
+from orders
+group by shipping_city
+)
+select shipping_city, citywise_revenue,citywise_revenue*100/ sum(citywise_revenue) over () as city_rev_pct
+from cte
+order by city_rev_pct desc limit 5;
+
+-- Q15. Average order value (AOV) per customer.
+select o.customer_id, c.city,c.first_name,round(avg(o.order_total),2) as aov
+from orders o
+join customers c on c.customer_id= o.customer_id
+group by customer_id
+order by aov desc;
+
+select avg(order_total) as aov
+from orders 
+
+
+-- customers with AOV higher than the overall avg AOV.
+with cte as 
+(select o.customer_id, c.city,c.first_name,round(avg(o.order_total),2) as aov
+from orders o
+join customers c on c.customer_id= o.customer_id
+group by customer_id
+having aov> (select avg(order_total) as aov from orders ))
+select count(customer_id)
+from cte
+
+-- Lower aov than the avg.
+with cte as 
+(select o.customer_id, c.city,c.first_name,round(avg(o.order_total),2) as aov
+from orders o
+join customers c on c.customer_id= o.customer_id
+group by customer_id
+having aov< (select avg(order_total) as aov from orders ))
+select count(customer_id)
+from cte
+
+
+-- Use case to find no of cust with aov higher and lower than avg.
+with cte as 
+(select o.customer_id, c.city,c.first_name,round(avg(o.order_total),2) as aov
+from orders o
+join customers c on c.customer_id= o.customer_id
+group by customer_id),
+cte2 as(
+select customer_id, 
+      case when aov> avg(aov) over() then 1 else 0 end as high_aov,
+	  case when aov< avg(aov) over() then 1 else 0 end as low_aov
+from cte
+group by customer_id)
+select sum(high_aov) , sum(low_aov)
+from cte2
+
+-- Q16. Check the orders where the order_total is not equal to the SUM of line total.
+-- Line total is according to the qty, discount, etc. The order total should be equal to the SUM of line total
+select o.order_id, o.order_total, sum(oi.line_total) as line_total
+from orders o 
+join order_items oi on o.order_id= oi.order_id
+group by o.order_id, o.order_total
+having  order_total != sum(line_total)

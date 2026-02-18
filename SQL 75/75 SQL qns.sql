@@ -3166,6 +3166,38 @@ from cte
 where quantity>product_avg_qty;
 
 -- Q10.Total orders and total revenue Monthwise.
+select  count(order_id) as total_orders,
+        sum(order_total) as total_revenue, 
+		date_format(order_datetime, '%Y-%m') as month_of_order
+from orders 
+group by date_format(order_datetime, '%Y-%m')
+order by total_revenue desc;
 
-select * from order_items
 
+-- Q11. Orders that have not been delivered yet.
+select Count(order_id) as order_not_delivered_yet
+from orders
+where order_status not in ('DELIVERED')
+
+select distinct order_status from orders
+
+
+-- Q12. Payment method contributing maximum revenue.
+select payment_method, SUM(order_total) as total_revenue
+from orders
+group by payment_method
+order by total_revenue desc limit 1;
+
+
+-- % of revenue contribution by different payment types 
+with paymtype_contri as 
+(select payment_method, SUM(order_total) as total_revenue_by_pay_type
+from orders
+group by payment_method )
+select payment_method, total_revenue_by_pay_type*100/sum(total_revenue_by_pay_type) over() as paymtype_pct
+from paymtype_contri
+order by paymtype_pct desc;
+
+select 7/75*100
+
+-- Q13. Customers who signed up but never ordered.

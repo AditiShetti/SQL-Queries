@@ -3124,11 +3124,6 @@ where dense_r= 1;
         
 
 -- Q7. Customers who have returned atleast 1 item
-select * from order_items;
-select * from orders;
-select * from returns;
-select * from customers;
-
 
 select c.customer_id,c.first_name, o.order_id, r.order_item_id,  r.reason
 from customers as c
@@ -3277,3 +3272,49 @@ from orders o
 join order_items oi on o.order_id= oi.order_id
 group by o.order_id, o.order_total
 having  order_total != sum(line_total)
+
+select * from order_items;
+select * from orders;
+select * from returns;
+select * from products;
+select * from customers;
+
+
+-- Q17. Top 5 products by quantity sold.
+select p.product_id, p.product_name,sum(oi.quantity) as total_qty
+from order_items oi
+join products p on p.product_id= oi.product_id
+group by p.product_id, p.product_name
+order by total_qty desc
+limit 5;
+
+-- Q18. Categorywise revenue contribution.
+
+select p.category, sum(oi.line_total) as total_rev
+from products p
+join order_items oi on p.product_id= oi.product_id
+group by p.category
+order by total_rev desc;
+
+-- Q19.Discount % applied per order_item.
+select  order_item_id, 
+		product_id, unit_price, 
+        sell_price,
+        round((discount/unit_price)*100,2) as disc_per_item_pct
+from order_items
+order by  disc_per_item_pct desc;
+
+-- Q20. Orders having more than 2 distinct products.
+select count(*) 
+from(
+select order_id, count(distinct product_id) as prod_count
+from order_items
+group by order_id
+having count(distinct product_id)>2) t;
+
+-- Q21. Avg no of items per order(Basket size)
+select avg(qty_per_order) as avg_item
+from
+(select order_id, sum(quantity) as qty_per_order
+from order_items
+group by order_id) s;

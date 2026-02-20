@@ -3289,7 +3289,6 @@ order by total_qty desc
 limit 5;
 
 -- Q18. Categorywise revenue contribution.
-
 select p.category, sum(oi.line_total) as total_rev
 from products p
 join order_items oi on p.product_id= oi.product_id
@@ -3311,6 +3310,8 @@ select order_id, count(distinct product_id) as prod_count
 from order_items
 group by order_id
 having count(distinct product_id)>2) t;
+
+
 
 -- Q21. Avg no of items per order(Basket size)
 select avg(qty_per_order) as avg_item

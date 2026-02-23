@@ -3273,12 +3273,6 @@ join order_items oi on o.order_id= oi.order_id
 group by o.order_id, o.order_total
 having  order_total != sum(line_total)
 
-select * from order_items;
-select * from orders;
-select * from returns;
-select * from products;
-select * from customers;
-
 
 -- Q17. Top 5 products by quantity sold.
 select p.product_id, p.product_name,sum(oi.quantity) as total_qty
@@ -3311,11 +3305,56 @@ from order_items
 group by order_id
 having count(distinct product_id)>2) t;
 
-
-
 -- Q21. Avg no of items per order(Basket size)
 select avg(qty_per_order) as avg_item
 from
 (select order_id, sum(quantity) as qty_per_order
 from order_items
 group by order_id) s;
+
+
+select * from order_items;
+select * from orders;
+select * from returns;
+select * from products;
+select * from customers;
+
+-- Q22. Customers with more than 2 orders in the last 6 months.
+-- where order_datetime >= max(order_datetime) - interval 6 month gives error as we cant use aggregate brfore grouping 
+select customer_id, count(order_id)
+from orders 
+where order_datetime >= ( select max(order_datetime) from orders) - interval 6 month
+group by customer_id 
+having count(order_id)>2 
+
+-- Q23. Active products with 0 sales in the last 90 days.
+select  p.product_id, p.product_name,count(o.order_id) 
+from products p
+left join order_items oi on p.product_id= oi.product_id 
+left join orders o on oi.order_id= o.order_id
+and o.order_datetime>= (select max(order_datetime) from orders ) - interval 90 day
+group by p.product_id, p.product_name
+having count(o.order_id) = 0;
+
+-- Q24.Average Time Gap Between Consecutive Order Per Customers 
+-- Customers with only 1 order or who haven't ordered yet are not included.
+with cte1 as
+(
+select customer_id, 
+		order_datetime,
+ lag(order_datetime,1) over(partition by customer_id order by order_datetime) as prev_order
+from orders )
+select customer_id, 
+		round(avg(datediff (order_datetime,prev_order)),1) as avg_diff_date	
+from cte1
+where prev_order is not null
+group by customer_id
+
+
+
+
+
+
+
+
+

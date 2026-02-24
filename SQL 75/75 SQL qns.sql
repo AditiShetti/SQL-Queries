@@ -3313,12 +3313,6 @@ from order_items
 group by order_id) s;
 
 
-select * from order_items;
-select * from orders;
-select * from returns;
-select * from products;
-select * from customers;
-
 -- Q22. Customers with more than 2 orders in the last 6 months.
 -- where order_datetime >= max(order_datetime) - interval 6 month gives error as we cant use aggregate brfore grouping 
 select customer_id, count(order_id)
@@ -3349,11 +3343,29 @@ select customer_id,
 from cte1
 where prev_order is not null
 group by customer_id
+order by avg_diff_date desc;
 
 
+select * from order_items;
+select * from orders where customer_id = 3;
+select * from returns;
+select * from products;
+select * from customers;
 
-
-
+-- Q25. First Order Value vs Latest Order Value Per Customer
+with cte as
+(
+select c.customer_id, o.order_total,
+row_number() over(partition by  c.customer_id order by o.order_datetime asc) as first_order,
+row_number() over(partition by  c.customer_id order by o.order_datetime desc) as latest_order
+from customers c
+join orders o on o.customer_id= c.customer_id
+)
+select customer_id, 
+max(case when first_order= 1 then order_total end) as first_order_value,
+max(case when latest_order= 1 then order_total end) as latest_order_value
+from cte
+group by customer_id ;
 
 
 

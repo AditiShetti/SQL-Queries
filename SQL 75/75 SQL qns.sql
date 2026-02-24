@@ -3368,5 +3368,16 @@ from cte
 group by customer_id ;
 
 
+-- Q26.Highest Contributing Order_Item Per Order 
+select * from order_items
 
-
+with cte as 
+(
+select oi.order_id,oi.order_item_id,oi.line_total,p.product_name,
+row_number() over(partition by order_id order by line_total desc) as row_n
+from order_items oi
+join products p on oi.product_id= p.product_id
+)
+select order_id, order_item_id,line_total,product_name
+from cte
+where row_n = 1

@@ -3346,12 +3346,6 @@ group by customer_id
 order by avg_diff_date desc;
 
 
-select * from order_items;
-select * from orders where customer_id = 3;
-select * from returns;
-select * from products;
-select * from customers;
-
 -- Q25. First Order Value vs Latest Order Value Per Customer
 with cte as
 (
@@ -3369,8 +3363,6 @@ group by customer_id ;
 
 
 -- Q26.Highest Contributing Order_Item Per Order 
-select * from order_items
-
 with cte as 
 (
 select oi.order_id,oi.order_item_id,oi.line_total,p.product_name,
@@ -3381,3 +3373,15 @@ join products p on oi.product_id= p.product_id
 select order_id, order_item_id,line_total,product_name
 from cte
 where row_n = 1
+
+
+-- Q27.Return Requested Approval Taking More Than 5 Days
+select * from order_items;
+select * from orders where customer_id = 3;
+select * from returns;
+select * from products;
+select * from customers;
+
+select return_id,requested_at,approved_at
+from returns
+where approved_at is not null and datediff(approved_at,requested_at )>=5 

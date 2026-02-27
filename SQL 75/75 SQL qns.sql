@@ -3377,11 +3377,45 @@ where row_n = 1
 
 -- Q27.Return Requested Approval Taking More Than 5 Days
 select * from order_items;
-select * from orders where customer_id = 3;
+select * from orders ;
 select * from returns;
 select * from products;
 select * from customers;
 
-select return_id,requested_at,approved_at
+select return_id,requested_at,approved_at, status
 from returns
 where approved_at is not null and datediff(approved_at,requested_at )>=5 
+
+
+-- Q28. Category wise return rate. -- the qty of items returned/the qty sold
+with category_sales as
+(
+select category, sum(quantity) as total_qty
+from products p
+join order_items oi on oi.product_id= p.product_id
+group by category),
+category_returns as 
+(
+select category, sum(quantity) as total_return_qty
+from products p
+join order_items using (product_id)
+join returns using (order_item_id)	
+group by category
+)
+select category, total_return_qty,total_qty,
+round((total_return_qty/total_qty)*100,2) as return_percent
+from category_sales cs
+join category_returns cr 
+using(category)
+order by return_percent desc;
+
+-- Q29. Brandwise revenue Contribution.
+select * 
+from order_items oi
+join products p  using(product_id)
+
+
+
+
+
+

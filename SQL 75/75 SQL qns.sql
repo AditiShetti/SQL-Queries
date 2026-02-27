@@ -3376,12 +3376,6 @@ where row_n = 1
 
 
 -- Q27.Return Requested Approval Taking More Than 5 Days
-select * from order_items;
-select * from orders ;
-select * from returns;
-select * from products;
-select * from customers;
-
 select return_id,requested_at,approved_at, status
 from returns
 where approved_at is not null and datediff(approved_at,requested_at )>=5 
@@ -3410,12 +3404,39 @@ using(category)
 order by return_percent desc;
 
 -- Q29. Brandwise revenue Contribution.
-select * 
+select brand, 
+      (revenue*100/sum(revenue) over ()) as brand_rev_contri
+from 
+(select brand, 
+		sum(line_total) as revenue
 from order_items oi
-join products p  using(product_id)
+join products p using(product_id)
+group by brand
+order by revenue desc) a;
 
 
+-- Q30. High return customers (return amount >25% of total purchase)
+select * from order_items;
+select * from orders ;
+select * from returns;
+select * from products;
+select * from customers;
 
 
+with total_amount as  (
+select customer_id, sum(order_total) as total_amount_spent
+from orders
+group by customer_id
+),
+refund_amount as(
+select customer_id, sum(refund_amount) as return_amount
+from returns r join order_items using(order_item_id)
+join orders using(order_id)
+group by customer_id
+)
+select customer_id , return_amount,total_amount_spent, round((return_amount/total_amount_spent)*100,2) as refund_percent
+from total_amount join refund_amount
+using (customer_id)
+where round((return_amount/total_amount_spent)*100,2)>25
 
 

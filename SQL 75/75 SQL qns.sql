@@ -3416,15 +3416,8 @@ order by revenue desc) a;
 
 
 -- Q30. High return customers (return amount >25% of total purchase)
-select * from order_items;
-select * from orders ;
-select * from returns;
-select * from products;
-select * from customers;
-
-
 with total_amount as  (
-select customer_id, sum(order_total) as total_amount_spent
+select customer_id, sum(order_total) as total_purchase_amount
 from orders
 group by customer_id
 ),
@@ -3434,9 +3427,39 @@ from returns r join order_items using(order_item_id)
 join orders using(order_id)
 group by customer_id
 )
-select customer_id , return_amount,total_amount_spent, round((return_amount/total_amount_spent)*100,2) as refund_percent
+select customer_id , return_amount,total_purchase_amount, round((return_amount/total_purchase_amount)*100,2) as refund_percent
 from total_amount join refund_amount
 using (customer_id)
-where round((return_amount/total_amount_spent)*100,2)>25
+where round((return_amount/total_purchase_amount)*100,2)>25
 
 
+-- Q31.ORDERS PLACED BUT LATER CANCELLED (REVENUE IMPACT)
+select sum(order_total) as cancelled_rev, count(order_id) as cancelled_orders
+FROM orders 
+where order_status = 'CANCELLED'
+
+
+-- Q32. DISTRIBUTION BUCKET BASED ON CUSTOMER'S ORDER
+select customer_id, count(o.order_id) as total_orders, 
+      case when count(o.order_id) = 1 then '1' 
+           when count(o.order_id) between 2 and 5  then '2-5'
+           when count(o.order_id) between 6 and 10  then '6-10' 
+           else '>10' end as order_count_bucket
+from orders o
+join customers c using (customer_id)
+group by customer_id;
+
+-- Q33.MONTH WISE REVENUE LOSS DUE TO RETURNS 
+
+select * from order_items;
+select * from orders ;
+select * from returns;
+select * from products;
+select * from customers;
+
+select date_format(order_datetime, "%Y-%m") as month_year, sum(refund_amount) as refund_amount
+from orders o
+join order_items oi using (order_id)
+join returns r using (order_item_id)
+group by date_format(order_datetime, "%Y-%m")
+order by month_year;

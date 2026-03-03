@@ -3450,16 +3450,46 @@ join customers c using (customer_id)
 group by customer_id;
 
 -- Q33.MONTH WISE REVENUE LOSS DUE TO RETURNS 
-
-select * from order_items;
-select * from orders ;
-select * from returns;
-select * from products;
-select * from customers;
-
 select date_format(order_datetime, "%Y-%m") as month_year, sum(refund_amount) as refund_amount
 from orders o
 join order_items oi using (order_id)
 join returns r using (order_item_id)
 group by date_format(order_datetime, "%Y-%m")
 order by month_year;
+
+
+-- Q34.CUSTOMERS WHOSE ORDER VALUE GREATER THAN PREVIOUS ORDER VALUE
+with cte as 
+(select customer_id,order_datetime,order_total,
+lag(order_total) over(partition by customer_id order by order_datetime) as prev_order
+from orders 
+)
+SELECT *
+from cte 
+where order_total>prev_order
+
+-- Q35.REPEAT Vs ONE-TIME CUSTOMER REVENUE CONTRIBUTION 
+select * from order_items;
+select * from orders ;
+select * from returns;
+select * from products;
+select * from customers;
+
+with one_time_cust as 
+(select  customer_id, sum(order_total)as one_time_cust_rev,count(*) as no_of_orders
+from orders
+group by customer_id
+having no_of_orders= 1),
+repeat_cust as(
+select customer_id, sum(order_total) as repeat_cust_rev,count(*) as no_of_orders
+from orders
+group by customer_id
+having no_of_orders> 1
+)
+select sum(one_time_cust_rev) as revenue_one_time_customers, sum(repeat_cust_rev) as revenue_repeat_cust
+from repeat_cust
+join one_time_cust using(customer_id)
+
+
+
+

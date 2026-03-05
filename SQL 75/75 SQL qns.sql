@@ -3475,20 +3475,17 @@ select * from returns;
 select * from products;
 select * from customers;
 
-with one_time_cust as 
-(select  customer_id, sum(order_total)as one_time_cust_rev,count(*) as no_of_orders
+with cust_order as 
+(select  customer_id, 
+		sum(order_total)as total_rev,
+		count(*) as no_of_orders,
+        case when count(*)> 1 then 'repeat_cust'
+        when count(*) = 1 then "one_time" end as cust_type
 from orders
-group by customer_id
-having no_of_orders= 1),
-repeat_cust as(
-select customer_id, sum(order_total) as repeat_cust_rev,count(*) as no_of_orders
-from orders
-group by customer_id
-having no_of_orders> 1
-)
-select sum(one_time_cust_rev) as revenue_one_time_customers, sum(repeat_cust_rev) as revenue_repeat_cust
-from repeat_cust
-join one_time_cust using(customer_id)
+group by customer_id)
+select cust_type, sum(total_rev) as revenue_by_cust_type
+from cust_order
+group by cust_type
 
 
 

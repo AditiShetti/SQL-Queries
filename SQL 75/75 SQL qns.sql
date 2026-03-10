@@ -3517,8 +3517,27 @@ from events
 where gold not in (select silver from events union all select bronze from events)
 group by gold ;	
 
--- Q.37
 
+-- Q37. Find peak hours in a day
+select count(order_id) as order_count ,hour(order_datetime) as hour_of_order 
+from orders
+group by hour(order_datetime)
+order by order_count desc ;
+
+-- Q38. Month over Month (MoM) growth rate
+with cte as 
+(select sum(order_total) as monthwise_sale, date_format(order_datetime,"%Y-%m") as month_year
+from orders
+group by date_format(order_datetime,"%Y-%m") 
+order by month_year)
+select month_year, monthwise_sale , lag(monthwise_sale, 1) over(order by month_year) as prev_month_sale , 
+      round((monthwise_sale- lag(monthwise_sale, 1) over(order by month_year))*100/lag(monthwise_sale, 1) over(order by month_year),2) as MoM
+from cte
+
+
+
+
+-- Q.38
 create table tickets
 (
 ticket_id varchar(10),
@@ -3543,7 +3562,7 @@ SELECT *, datediff(resolved_date, create_date) as actual_diff_days
  from tickets
 
 
--- Q38. Find total no. of people present in the hospital
+-- Q39. Find total no. of people present in the hospital
 create table hospital ( emp_id int
 , action varchar(10)
 , time datetime);

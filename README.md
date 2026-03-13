@@ -55,6 +55,8 @@ https://8weeksqlchallenge.com/
  2. The stolen sound  
  3. The Vanishing diamond.    
 
+
+https://sqlpd.com/  
  
 I plan to keep adding more queries that I find interesting.     
 

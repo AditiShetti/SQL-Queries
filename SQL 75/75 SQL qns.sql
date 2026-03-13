@@ -3535,9 +3535,21 @@ select month_year, monthwise_sale , lag(monthwise_sale, 1) over(order by month_y
 from cte
 
 
+-- Q39.Customers who stopped ordering (150 days gap)
+
+select customer_id, max(order_datetime) as last_order
+from orders
+group by customer_id
+having datediff((select max(order_datetime) from orders), MAX(order_datetime)) >=150;
 
 
--- Q.38
+select customer_id, max(order_datetime) as last_order
+from orders
+group by customer_id
+having  MAX(order_datetime) <(select max(order_datetime) from orders) - interval 150 day;
+
+
+-- Q.39
 create table tickets
 (
 ticket_id varchar(10),
@@ -3562,7 +3574,7 @@ SELECT *, datediff(resolved_date, create_date) as actual_diff_days
  from tickets
 
 
--- Q39. Find total no. of people present in the hospital
+-- Q40. Find total no. of people present in the hospital
 create table hospital ( emp_id int
 , action varchar(10)
 , time datetime);

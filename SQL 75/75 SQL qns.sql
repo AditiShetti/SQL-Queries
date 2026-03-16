@@ -3549,7 +3549,70 @@ group by customer_id
 having  MAX(order_datetime) <(select max(order_datetime) from orders) - interval 150 day;
 
 
--- Q.39
+
+-- 	Q40. Customers buying from the same brand (Brand Loyalty)
+select  o.customer_id, p.brand ,count(distinct(o.order_id)) as order_count
+from orders o
+join order_items oi  using(order_id)
+join products p using (product_id)
+group by  o.customer_id, p.brand
+having count(distinct(o.order_id))>2
+order by customer_id ;
+
+
+
+-- Q41. Statewise revenue vs returns comparison 
+with statewise_rev as
+(
+select shipping_state, sum(order_total) as revenue
+from orders
+group by shipping_state
+),
+statewise_returns as
+(
+select shipping_state, sum(refund_amount) as return_amt
+from returns
+join order_items using(order_item_id)
+join orders using (order_id)
+group by shipping_state
+)
+select shipping_state, revenue, ifnull(return_amt,0) as return_amt , round((return_amt/revenue)*100,2) as return_by_rev_percent
+from statewise_rev join statewise_returns 
+using (shipping_state)  
+group by shipping_state
+order by return_by_rev_percent desc;
+
+
+-- Q42. Find total no. of people present in the hospital
+create table hospital ( emp_id int
+, action varchar(10)
+, time datetime);
+insert into hospital values ('1', 'in', '2019-12-22 09:00:00');
+insert into hospital values ('1', 'out', '2019-12-22 09:15:00');
+insert into hospital values ('2', 'in', '2019-12-22 09:00:00');
+insert into hospital values ('2', 'out', '2019-12-22 09:15:00');
+insert into hospital values ('2', 'in', '2019-12-22 09:30:00');
+insert into hospital values ('3', 'out', '2019-12-22 09:00:00');
+insert into hospital values ('3', 'in', '2019-12-22 09:15:00');
+insert into hospital values ('3', 'out', '2019-12-22 09:30:00');
+insert into hospital values ('3', 'in', '2019-12-22 09:45:00');
+insert into hospital values ('4', 'in', '2019-12-22 09:45:00');
+insert into hospital values ('5', 'out', '2019-12-22 09:40:00');
+
+with cte as
+(select *, dense_rank() over(PARTITION BY emp_id order by time desc) as dense_r
+FROM hospital
+)
+select count(*)
+from cte
+where dense_r = 1 and action = "in"
+
+-- Q43. Products Sold Consistently In Last 3 Months.
+
+
+-- Q44. Products with high discount but low sales. 
+
+-- Q.40
 create table tickets
 (
 ticket_id varchar(10),
@@ -3574,27 +3637,4 @@ SELECT *, datediff(resolved_date, create_date) as actual_diff_days
  from tickets
 
 
--- Q40. Find total no. of people present in the hospital
-create table hospital ( emp_id int
-, action varchar(10)
-, time datetime);
-insert into hospital values ('1', 'in', '2019-12-22 09:00:00');
-insert into hospital values ('1', 'out', '2019-12-22 09:15:00');
-insert into hospital values ('2', 'in', '2019-12-22 09:00:00');
-insert into hospital values ('2', 'out', '2019-12-22 09:15:00');
-insert into hospital values ('2', 'in', '2019-12-22 09:30:00');
-insert into hospital values ('3', 'out', '2019-12-22 09:00:00');
-insert into hospital values ('3', 'in', '2019-12-22 09:15:00');
-insert into hospital values ('3', 'out', '2019-12-22 09:30:00');
-insert into hospital values ('3', 'in', '2019-12-22 09:45:00');
-insert into hospital values ('4', 'in', '2019-12-22 09:45:00');
-insert into hospital values ('5', 'out', '2019-12-22 09:40:00');
-
-with cte as
-(select *, dense_rank() over(PARTITION BY emp_id order by time desc) as dense_r
-FROM hospital
-)
-select count(*)
-from cte
-where dense_r = 1 and action = "in"
 

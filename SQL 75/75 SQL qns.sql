@@ -3297,6 +3297,7 @@ select  order_item_id,
 from order_items
 order by  disc_per_item_pct desc;
 
+
 -- Q20. Orders having more than 2 distinct products.
 select count(*) 
 from(
@@ -3608,9 +3609,48 @@ from cte
 where dense_r = 1 and action = "in"
 
 -- Q43. Products Sold Consistently In Last 3 Months.
+-- Includes may 
+with prod_sold_in_3_months as
+(select p.product_id, p.product_name, 
+date_format(order_datetime, "%Y-%m") as yearmonth
+from orders
+join order_items oi using (order_id)
+join products p using(product_id)
+where order_datetime > (select max(order_datetime) from orders) - interval 3 month
+group by p.product_id, p.product_name, date_format(order_datetime, "%Y-%m")
+)
+select product_id, product_name, count(yearmonth) as order_month_count
+from prod_sold_in_3_months
+group by product_id, product_name
+having count(yearmonth)>= 3;
+
 
 
 -- Q44. Products with high discount but low sales. 
+select * from orders;
+select * from order_items;
+select * from products;
+
+select p.product_id, p.product_name, (oi.discount/p.unit_price)*100 as disc, count(o.order_id) 
+from products p
+join order_items oi using (product_id)
+join orders o using(order_id)
+where (oi.discount/p.unit_price)*100 >20
+group by p.product_id, p.product_name,(oi.discount/p.unit_price)*100
+having count(o.order_id) <= 3
+order by disc desc;
+
+
+-- Q45. Citywise order fullfillment efficiency.
+
+
+
+
+
+-- Q46. Return reason impact on operational efficiency
+
+
+
 
 -- Q.40
 create table tickets

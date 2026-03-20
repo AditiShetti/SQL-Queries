@@ -3701,7 +3701,16 @@ from customerwise_order
 where dense_r= 1;
 
 
--- Q.40
+-- Q48. Orders where distinct products purchased
+
+-- Q49. Customers placed oders on consecutive days.
+select  customer_id, order_datetime,
+      ROW_NUMBER() over(partition by customer_id order by order_datetime) as rn 
+from orders
+
+
+
+-- Q.50
 create table tickets
 (
 ticket_id varchar(10),

@@ -3622,34 +3622,83 @@ group by p.product_id, p.product_name, date_format(order_datetime, "%Y-%m")
 select product_id, product_name, count(yearmonth) as order_month_count
 from prod_sold_in_3_months
 group by product_id, product_name
-having count(yearmonth)>= 3;
+having count(distinct(yearmonth))>= 3;
 
 
-
--- Q44. Products with high discount but low sales. 
-select * from orders;
-select * from order_items;
-select * from products;
-
-select p.product_id, p.product_name, (oi.discount/p.unit_price)*100 as disc, count(o.order_id) 
+-- Q44. Products with high discount (>10)but low sales. 
+with prod_disc_qty as 
+(select p.product_id, 
+		p.product_name, 
+        round(avg(oi.discount/p.unit_price)*100,2) as avg_disc,
+        sum(oi.quantity) as total_qty
 from products p
 join order_items oi using (product_id)
 join orders o using(order_id)
-where (oi.discount/p.unit_price)*100 >20
-group by p.product_id, p.product_name,(oi.discount/p.unit_price)*100
-having count(o.order_id) <= 3
-order by disc desc;
+group by p.product_id, p.product_name
+order by avg_disc desc)
+select *
+from prod_disc_qty
+where avg_disc >10 and total_qty < (select avg(total_qty) from prod_disc_qty);
 
 
 -- Q45. Citywise order fullfillment efficiency.
+-- a. Using CTEs.
+with delivered_orders as 
+(select shipping_city, 
+		count(order_id) as delivered_orders
+from orders
+where order_status= 'DELIVERED'
+group by shipping_city),
+all_orders as 
+(select shipping_city, 
+		count(order_id)  as all_orders
+from orders group by shipping_city)
+select all_orders.shipping_city, 
+		delivered_orders,
+		all_orders,
+        (delivered_orders/all_orders)*100 as order_fullfillment
+from delivered_orders join all_orders using (shipping_city)
+order by order_fullfillment desc;
+
+-- b. Using CASE 
+select shipping_city, count(order_id) as all_orders,
+      (sum(case when order_status= 'DELIVERED' then 1 end)) as delivered_orders,
+      (sum(case when order_status= 'DELIVERED' then 1 end)*100)/count(order_id) as order_fullfillment
+from orders
+group by shipping_city
+order by order_fullfillment desc;
 
 
-
-
-
+29
 -- Q46. Return reason impact on operational efficiency
+select * from orders;
+
+select reason, 
+	   count(return_id)as total_returns ,
+	   sum(refund_amount) as total_refund_amt,
+ round(sum(refund_amount)/(select sum(order_total) from orders) *100,2) as revenue_impact_by_return_reason
+from returns
+group by reason
+order by revenue_impact_by_return_reason desc;
 
 
+30
+-- Q47. First product purchased by each customer.
+with customerwise_order as 
+(select c.customer_id, 
+		c.first_name, 
+        p.product_id,
+		p.product_name ,
+		o.order_id, 
+		order_datetime, 
+		dense_rank() over(partition by customer_id order by order_datetime) as dense_r
+from customers c 
+join orders o using(customer_id)
+join order_items oi using(order_id)
+join products p using(product_id))
+select customer_id, first_name, product_name, order_datetime
+from customerwise_order
+where dense_r= 1;
 
 
 -- Q.40

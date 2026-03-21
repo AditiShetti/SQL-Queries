@@ -3470,12 +3470,6 @@ from cte
 where order_total>prev_order
 
 -- Q35.REPEAT Vs ONE-TIME CUSTOMER REVENUE CONTRIBUTION 
-select * from order_items;
-select * from orders ;
-select * from returns;
-select * from products;
-select * from customers;
-
 with cust_order as 
 (select  customer_id, 
 		sum(order_total)as total_rev,
@@ -3608,6 +3602,7 @@ select count(*)
 from cte
 where dense_r = 1 and action = "in"
 
+
 -- Q43. Products Sold Consistently In Last 3 Months.
 -- Includes may 
 with prod_sold_in_3_months as
@@ -3640,7 +3635,7 @@ select *
 from prod_disc_qty
 where avg_disc >10 and total_qty < (select avg(total_qty) from prod_disc_qty);
 
-
+28
 -- Q45. Citywise order fullfillment efficiency.
 -- a. Using CTEs.
 with delivered_orders as 
@@ -3668,7 +3663,6 @@ from orders
 group by shipping_city
 order by order_fullfillment desc;
 
-
 29
 -- Q46. Return reason impact on operational efficiency
 select * from orders;
@@ -3680,7 +3674,6 @@ select reason,
 from returns
 group by reason
 order by revenue_impact_by_return_reason desc;
-
 
 30
 -- Q47. First product purchased by each customer.
@@ -3700,14 +3693,50 @@ select customer_id, first_name, product_name, order_datetime
 from customerwise_order
 where dense_r= 1;
 
-
+31 -- 
 -- Q48. Orders where distinct products purchased
+select * from order_items;
+select * from orders;
+select * from products;
 
--- Q49. Customers placed oders on consecutive days.
-select  customer_id, order_datetime,
-      ROW_NUMBER() over(partition by customer_id order by order_datetime) as rn 
-from orders
+select oi.order_id, count(p.product_id) as count_of_prod
+from order_items oi
+join products p using (product_id)
+group by oi.order_id
+having count(distinct(p.product_id)) = 1;
 
+
+
+32--
+-- Q49. Customers placed orders on consecutive days.
+-- Using CTE
+with cte as 
+(select  customer_id, order_datetime,
+      lag(order_datetime,1) over(partition by customer_id order by order_datetime) as prev_order_datetime 
+from orders)
+select *
+from cte 
+where datediff(order_datetime,prev_order_datetime)=1;
+
+-- USING SELF JOIN
+select  o1.customer_id, o1.order_datetime
+from orders o1
+join orders o2 using(customer_id)
+where datediff(o1.order_datetime ,o2.order_datetime) = 1;
+
+32--
+-- Q50. Statewise order count and revenue
+select shipping_state, count(order_id) as order_count, sum(order_total) as revenue
+from orders 
+group by shipping_state
+order by order_count  desc, revenue desc;
+
+
+select * from order_items;
+select * from orders;
+select * from returns;
+select * from products;
+select * from customers;
 
 
 -- Q.50

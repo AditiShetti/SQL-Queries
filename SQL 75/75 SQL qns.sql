@@ -3705,7 +3705,10 @@ join products p using (product_id)
 group by oi.order_id
 having count(distinct(p.product_id)) = 1;
 
-
+select *
+from order_items
+join orders using (order_id)
+where order_id in (3, 791);
 
 32--
 -- Q49. Customers placed orders on consecutive days.
@@ -3731,13 +3734,30 @@ from orders
 group by shipping_state
 order by order_count  desc, revenue desc;
 
+33--
+-- Q51. Customer Funnel Analysis count of customers(customers -> orders- returns)
+select
+(select count(distinct customer_id) as customer_count from customers) as customer_count,
+(select count(distinct customer_id) as ordering_customer_count from orders ) as ordering_customer_count,
+(select count(distinct customer_id) as return_cust 
+from  orders o  
+join order_items oi using(order_id)
+join returns r using (order_item_id)) as return_cust
+
+
+-- Q52. Citywise order count and total revenue.
+select shipping_city, count(distinct order_id) as order_count , sum(order_total) as revenue
+from orders
+group by shipping_city
+order by order_count desc, revenue desc;
+
+
 
 select * from order_items;
 select * from orders;
 select * from returns;
 select * from products;
 select * from customers;
-
 
 -- Q.50
 create table tickets

@@ -3318,7 +3318,7 @@ group by order_id) s;
 -- where order_datetime >= max(order_datetime) - interval 6 month gives error as we cant use aggregate brfore grouping 
 select customer_id, count(order_id)
 from orders 
-where order_datetime >= ( select max(order_datetime) from orders) - interval 6 month
+where order_datetime >= (select max(order_datetime) from orders) - interval 6 month
 group by customer_id 
 having count(order_id)>2 
 
@@ -3635,7 +3635,7 @@ select *
 from prod_disc_qty
 where avg_disc >10 and total_qty < (select avg(total_qty) from prod_disc_qty);
 
-28
+
 -- Q45. Citywise order fullfillment efficiency.
 -- a. Using CTEs.
 with delivered_orders as 
@@ -3663,7 +3663,7 @@ from orders
 group by shipping_city
 order by order_fullfillment desc;
 
-29
+
 -- Q46. Return reason impact on operational efficiency
 select * from orders;
 
@@ -3675,7 +3675,7 @@ from returns
 group by reason
 order by revenue_impact_by_return_reason desc;
 
-30
+
 -- Q47. First product purchased by each customer.
 with customerwise_order as 
 (select c.customer_id, 
@@ -3693,7 +3693,7 @@ select customer_id, first_name, product_name, order_datetime
 from customerwise_order
 where dense_r= 1;
 
-31 -- 
+
 -- Q48. Orders where distinct products purchased
 select * from order_items;
 select * from orders;
@@ -3710,7 +3710,7 @@ from order_items
 join orders using (order_id)
 where order_id in (3, 791);
 
-32--
+
 -- Q49. Customers placed orders on consecutive days.
 -- Using CTE
 with cte as 
@@ -3727,14 +3727,15 @@ from orders o1
 join orders o2 using(customer_id)
 where datediff(o1.order_datetime ,o2.order_datetime) = 1;
 
-32--
+
+
 -- Q50. Statewise order count and revenue
 select shipping_state, count(order_id) as order_count, sum(order_total) as revenue
 from orders 
 group by shipping_state
 order by order_count  desc, revenue desc;
 
-33--
+33
 -- Q51. Customer Funnel Analysis count of customers(customers -> orders- returns)
 select
 (select count(distinct customer_id) as customer_count from customers) as customer_count,
@@ -3750,6 +3751,9 @@ select shipping_city, count(distinct order_id) as order_count , sum(order_total)
 from orders
 group by shipping_city
 order by order_count desc, revenue desc;
+
+
+-- Q53. 
 
 
 

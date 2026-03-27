@@ -3753,17 +3753,39 @@ group by shipping_city
 order by order_count desc, revenue desc;
 
 
--- Q53. 
-
-
-
 select * from order_items;
 select * from orders;
 select * from returns;
 select * from products;
 select * from customers;
 
--- Q.50
+
+-- Q53.Find room types that are searched most no of times.
+ create table airbnb_searches 
+(
+user_id int,
+date_searched date,
+filter_room_types varchar(200)
+);
+delete from airbnb_searches;
+insert into airbnb_searches values
+(1,'2022-01-01','entire home,private room')
+,(2,'2022-01-02','entire home,shared room')
+,(3,'2022-01-02','private room,shared room')
+,(4,'2022-01-03','private room');
+select * from airbnb_searches;
+
+with temp_airbnb as (
+select user_id,date_searched,substring_index(filter_room_types,',',1) as proper_room_type from airbnb_searches  -- output is before delimiter
+union all
+select user_id,date_searched,substring_index(filter_room_types,',',-1)as proper_room_type  from airbnb_searches where filter_room_types like '%,%' -- output is after delimiter
+order by user_id)
+select proper_room_type, count(*)
+from temp_airbnb
+group by proper_room_type;
+
+
+-- Q.50 
 create table tickets
 (
 ticket_id varchar(10),

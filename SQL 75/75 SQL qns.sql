@@ -3760,6 +3760,19 @@ select * from products;
 select * from customers;
 
 
+-- Q53.State-wise Order Status Analysis
+select shipping_state ,
+SUM(case when order_status = 'PLACED' then 1 else 0 end) as PLACED,
+SUM(case when order_status = 'CONFIRMED' then 1 else 0 end) as CONFIRMED,
+SUM(case when order_status = 'SHIPPED' then 1 else 0 end) as SHIPPED,
+SUM(case when order_status = 'DELIVERED' then 1 else 0 end) as DELIVERED,
+SUM(case when order_status = 'CANCELLED' then 1 else 0 end) as CANCELLED,
+SUM(case when order_status = 'RETURN_REQUESTED' then 1 else 0 end) as RETURN_REQUESTED,
+SUM(case when order_status = 'RETURNED' then 1 else 0 end) as RETURNED
+from orders
+Group by shipping_state
+
+
 -- Q53.Find room types that are searched most no of times.
  create table airbnb_searches 
 (
@@ -3785,7 +3798,38 @@ from temp_airbnb
 group by proper_room_type;
 
 
--- Q.50 
+-- Q54. IMPLEMENTING SLOWLY CHANGING DIMENSIONS
+
+CREATE TABLE product_stg(
+    Product_id  INT,
+    Product_Name VARCHAR(50),
+    Price   DECIMAL(9,2)
+);
+
+CREATE TABLE product_dim(
+    Product_id  INT primary key,
+    Product_Name VARCHAR(50),
+    Price   DECIMAL(9,2),
+ last_update date
+);
+
+create TABLE product_dim(
+ product_key int identity(1,1) primary key,
+    Product_id  INT,
+    Product_Name VARCHAR(50),
+    Price   DECIMAL(9,2),
+ start_date date,
+ end_date date
+);
+
+
+
+
+
+
+
+
+-- Q.50
 create table tickets
 (
 ticket_id varchar(10),

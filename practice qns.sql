@@ -828,28 +828,33 @@ create table city_copy as select * from city-- copy table without data
  
  select 'preffff'+ District from city
  
- -----------------------------------------------75 sql qns.
- -- Q2. customers who have placed exactly 1 order
-with cte as 
-(select  distinct(customer_id),count(*) as no_of_orders
-from orders
-group by customer_id
-having count(*)= 1)
-select sum(no_of_orders) as ordered_once
-from cte
 
--- Q3. Orders placed on Weekends. (dayname/dayofweek)
-select count(*) as weekend_orders 
-from orders
-where dayname(order_datetime) in ('Sunday','Saturday')
+---------------------- RECURSIVE CTE (references itself)
 
 
-with weekend_order_pct as 
-(select count(*) as total_orders, 
-	   sum(case when dayname(order_datetime) in ('Sunday','Saturday') 
-       then 1 else 0 end )
-        as weekend_orders
-from orders)
-select (weekend_orders/total_orders) *100 as weekend_order_pct
-from weekend_order_pct
+-- CREATING A CALENDER TABLE using Recursive CTE.
+
+
+Select cast('2000-01-01' as date)  as cal_date,
+year('2000-01-01') as cal_year, -- 1 
+month('2000-01-01') as cal_month,
+day('2000-01-01') as cal_day,
+quarter('2000-01-01') as cal_quarter,
+dayofweek('2000-01-01') as cal_dayofweek,
+dayofmonth('2000-01-01') as cal_dayofmonth,
+week('2000-01-01') as cal_week,  -- 7
+monthname('2000-01-01') as cal_monthname,
+dayname('2000-01-01') as cal_dayname,
+dayofyear('2000-01-01') as cal_dayofyear,
+weekday('2000-01-01') as cal_weekday  
+
+
+
+
+
+
+
+
+
+
 

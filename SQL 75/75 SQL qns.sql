@@ -3753,25 +3753,6 @@ group by shipping_city
 order by order_count desc, revenue desc;
 
 
-select * from order_items;
-select * from orders;
-select * from returns;
-select * from products;
-select * from customers;
-
-
--- Q53.State-wise Order Status Analysis
-select shipping_state ,
-SUM(case when order_status = 'PLACED' then 1 else 0 end) as PLACED,
-SUM(case when order_status = 'CONFIRMED' then 1 else 0 end) as CONFIRMED,
-SUM(case when order_status = 'SHIPPED' then 1 else 0 end) as SHIPPED,
-SUM(case when order_status = 'DELIVERED' then 1 else 0 end) as DELIVERED,
-SUM(case when order_status = 'CANCELLED' then 1 else 0 end) as CANCELLED,
-SUM(case when order_status = 'RETURN_REQUESTED' then 1 else 0 end) as RETURN_REQUESTED,
-SUM(case when order_status = 'RETURNED' then 1 else 0 end) as RETURNED
-from orders
-Group by shipping_state
-
 
 -- Q53.Find room types that are searched most no of times.
  create table airbnb_searches 
@@ -3798,7 +3779,34 @@ from temp_airbnb
 group by proper_room_type;
 
 
--- Q54. IMPLEMENTING SLOWLY CHANGING DIMENSIONS
+select * from order_items;
+select * from orders;
+select * from returns;
+select * from products;
+select * from customers;
+
+
+-- Q54.State-wise Order Status Analysis
+select shipping_state ,
+SUM(case when order_status = 'PLACED' then 1 else 0 end) as PLACED,
+SUM(case when order_status = 'CONFIRMED' then 1 else 0 end) as CONFIRMED,
+SUM(case when order_status = 'SHIPPED' then 1 else 0 end) as SHIPPED,
+SUM(case when order_status = 'DELIVERED' then 1 else 0 end) as DELIVERED,
+SUM(case when order_status = 'CANCELLED' then 1 else 0 end) as CANCELLED,
+SUM(case when order_status = 'RETURN_REQUESTED' then 1 else 0 end) as RETURN_REQUESTED,
+SUM(case when order_status = 'RETURNED' then 1 else 0 end) as RETURNED
+from orders
+Group by shipping_state
+
+
+-- Q55. Product wise price anomaly detection
+
+-- Q56. Find the top 3 product categories by total revenue in the last 6 months. For each, also show the return rate (% of order items returned).
+
+
+
+
+-- Q. IMPLEMENTING SLOWLY CHANGING DIMENSIONS
 
 CREATE TABLE product_stg(
     Product_id  INT,

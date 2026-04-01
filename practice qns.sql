@@ -850,11 +850,221 @@ weekday('2000-01-01') as cal_weekday
 
 
 
+call all_acc_details()
+
+
+-- Swiggy case study CampusX 
+-- SW USERS
+create table sw_users
+(user_id int auto_increment primary key, 
+name varchar(30) not null,
+email varchar(30) unique not null,
+password varchar(30) not null);
+
+insert into sw_users 
+values(1,'Nitish', 'nitish@gmail.com', 'p252h');
+
+insert into sw_users values(1,'Nitish', 'nitish@gmail.com', 'p252h');
+INSERT INTO sw_users VALUES (2, 'Khushboo', 'khushboo@gmail.com', 'hxn9b');
+INSERT INTO sw_users VALUES (3, 'Vartika', 'vartika@gmail.com', '9hu7j');
+INSERT INTO sw_users VALUES (4, 'Ankit', 'ankit@gmail.com', 'lkko3');
+INSERT INTO sw_users VALUES (5, 'Neha', 'neha@gmail.com', '3i7qm');
+INSERT INTO sw_users VALUES (6, 'Anupama', 'anupama@gmail.com', '46rdw2');
+INSERT INTO sw_users VALUES (7, 'Rishabh', 'rishabh@gmail.com', '4sw123');
+
+select * from sw_users;
+
+-- SW RESTART
+
+create table sw_rest
+(r_id int auto_increment primary key,
+r_name varchar(75) not null,
+cuisine varchar(75));
+
+INSERT INTO sw_rest VALUES
+(1, 'dominos', 'Italian'),
+(2, 'kfc', 'American'),
+(3, 'box8', 'North Indian'),
+(4, 'Dosa Plaza', 'South Indian'),
+(5, 'China Town', 'Chinese');
+
+select * from sw_rest;
+
+-- food
+create table sw_food
+(f_id int auto_increment primary key,
+f_name varchar(75) not null,
+type varchar(75) not null);
+
+INSERT INTO sw_food VALUES
+(1, 'Non-veg Pizza', 'Non-veg'),
+(2, 'Veg Pizza', 'Veg'),
+(3, 'Choco Lava cake', 'Veg'),
+(4, 'Chicken Wings', 'Non-veg'),
+(5, 'Chicken Popcorn', 'Non-veg'),
+(6, 'Rice Meal', 'Veg'),
+(7, 'Roti meal', 'Veg'),
+(8, 'Masala Dosa', 'Veg'),
+(9, 'Rava Idli', 'Veg'),
+(10, 'Schezwan Noodles', 'Veg'),
+(11, 'Veg Manchurian', 'Veg');
+
+select * from sw_food;
+
+-- menu
+create table sw_menu
+(menu_id int auto_increment primary key,
+r_id int ,
+f_id int ,
+price int not null,
+
+foreign key(r_id) references sw_rest(r_id),
+foreign key(f_id) references sw_food(f_id));
+
+INSERT INTO sw_menu VALUES
+(1, 1, 1, 450),
+(2, 1, 2, 400),
+(3, 1, 3, 100),
+(4, 2, 3, 115),
+(5, 2, 4, 230),
+(6, 2, 5, 300),
+(7, 3, 3, 80),
+(8, 3, 6, 160),
+(9, 3, 7, 140),
+(10, 4, 6, 230),
+(11, 4, 8, 180),
+(12, 4, 9, 120),
+(13, 5, 6, 250),
+(14, 5, 10, 220),
+(15, 5, 11, 180);
+select * from sw_menu;
+
+
+-- delivery partner
+
+create table sw_delivery_partner(partner_id int auto_increment primary key,
+partner_name varchar(50)  not null);
+
+INSERT INTO sw_delivery_partner (partner_name) VALUES   -- Data can be added without id as it is auto_increment
+('Suresh'),
+('Amit'),
+('Lokesh'),
+('Kartik'),
+('Gyandeep');
+select * from sw_menu;
 
 
 
+-- orders
+CREATE TABLE sw_orders (
+    order_id INT PRIMARY KEY,
+    user_id INT,
+    r_id INT,
+    amount INT NOT NULL,
+    date DATE NOT NULL,
+    partner_id INT,
+    delivery_time INT,
+    delivery_rating INT,
+    restaurant_rating INT,
+    
+    FOREIGN KEY (user_id) REFERENCES sw_users(user_id),
+    FOREIGN KEY (r_id) REFERENCES sw_rest(r_id),
+    FOREIGN KEY (partner_id) REFERENCES sw_delivery_partner(partner_id)
+);
 
 
 
+INSERT INTO sw_orders 
+(order_id, user_id, r_id, amount, date, partner_id, delivery_time, delivery_rating, restaurant_rating)
+VALUES
+(1001,1,1,550,'2022-05-10',1,25,5,3),
+(1002,1,2,415,'2022-05-26',1,19,5,2),
+(1003,1,3,240,'2022-06-15',5,29,4,NULL),
+(1004,1,3,240,'2022-06-29',4,42,3,5),
+(1005,1,3,220,'2022-07-10',1,58,1,4),
+(1006,2,1,950,'2022-06-10',2,16,5,NULL),
+(1007,2,2,530,'2022-06-23',3,60,1,5),
+(1008,2,3,240,'2022-07-07',5,33,4,5),
+(1009,2,4,300,'2022-07-17',4,41,1,NULL),
+(1010,2,5,650,'2022-07-31',1,67,1,4),
+(1011,3,1,450,'2022-05-10',2,25,3,1),
+(1012,3,4,180,'2022-05-20',5,33,4,1),
+(1013,3,2,230,'2022-05-30',4,45,3,NULL),
+(1014,3,2,230,'2022-06-11',2,55,1,2),
+(1015,3,2,230,'2022-06-22',3,21,5,NULL),
+(1016,4,4,300,'2022-05-15',3,31,5,5),
+(1017,4,4,300,'2022-05-30',1,50,1,NULL),
+(1018,4,4,400,'2022-06-15',2,40,3,5),
+(1019,4,5,400,'2022-06-30',1,70,2,4),
+(1020,4,5,400,'2022-07-15',3,26,5,3),
+(1021,5,1,550,'2022-07-01',5,22,2,NULL),
+(1022,5,1,550,'2022-07-08',1,34,5,1),
+(1023,5,2,645,'2022-07-15',4,38,5,1),
+(1024,5,2,645,'2022-07-21',2,58,2,1),
+(1025,5,2,645,'2022-07-28',2,44,4,NULL);
 
 
+select * from sw_orders;
+
+
+
+-- order_details
+
+create table sw_order_details (id int auto_increment primary key,
+order_id int ,
+f_id int , 
+
+foreign key(order_id) references sw_orders(order_id),
+foreign key(f_id) references sw_food(f_id));
+
+INSERT INTO order_details (order_id, f_id) VALUES
+(1001, 1),
+(1001, 3),
+(1002, 4),
+(1002, 3),
+(1003, 6),
+(1003, 3),
+(1004, 6),
+(1004, 3),
+(1005, 7),
+(1005, 3),
+(1006, 1),
+(1006, 2),
+(1006, 3),
+(1007, 4),
+(1007, 3),
+(1008, 6),
+(1008, 3),
+(1009, 8),
+(1009, 9),
+(1010, 10),
+(1010, 11),
+(1010, 6),
+(1011, 1),
+(1012, 8),
+(1013, 4),
+(1014, 4),
+(1015, 4),
+(1016, 8),
+(1016, 9),
+(1017, 8),
+(1017, 9),
+(1018, 10),
+(1018, 11),
+(1019, 10),
+(1019, 11),
+(1020, 10),
+(1020, 11),
+(1021, 1),
+(1021, 3),
+(1022, 1),
+(1022, 3),
+(1023, 3),
+(1023, 4),
+(1023, 5),
+(1024, 3),
+(1024, 4),
+(1024, 5),
+(1025, 3),
+(1025, 4),
+(1025, 5);

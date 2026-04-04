@@ -3779,12 +3779,6 @@ from temp_airbnb
 group by proper_room_type;
 
 
-select * from order_items;
-select * from orders;
-select * from returns;
-select * from products;
-select * from customers;
-
 
 -- Q54.State-wise Order Status Analysis
 select shipping_state ,
@@ -3799,9 +3793,60 @@ from orders
 Group by shipping_state
 
 
--- Q55. Product wise price anomaly detection
+-- Q55. Product wise price anomaly detection(Price variation)
+
+select p.product_id,p.product_name , 
+		count(*) as total_orders,
+        avg(sell_price) as avg_sell_price,
+		max(sell_price)- min(sell_price) as sell_price_variation
+from order_items
+join products p using(product_id)
+group by p.product_id,p.product_name
+having max(sell_price)- min(sell_price) >= 1000
+order by max(sell_price)- min(sell_price) desc ;
+
 
 -- Q56. Find the top 3 product categories by total revenue in the last 6 months. For each, also show the return rate (% of order items returned).
+select category, 
+		sum(case when order_id not in (select order_id from order_items join returns using(order_item_id))) then line_total else 0 end as revenue 
+from orders o 
+join order_items oi using(order_id)
+join products using(product_id)
+where and  order_datetime >= (select max(order_datetime) from orders) - interval 6 month
+group by category
+order by sum(line_total) desc;
+
+select category, sum(line_total) as revenue
+from orders o 
+join order_items oi using(order_id)
+join products using(product_id)
+join returns r using(order_item_id)
+where order_id not in (select order_id from order_items join returns using(order_item_id) )
+      and  order_datetime >= (select max(order_datetime) from orders) - interval 6 month
+group by category
+order by sum(line_total) desc;
+
+
+
+-- Q57. Products with high quantity but low revenue. 
+prods ordered in bulk yet the rev generted is less
+
+
+select * from order_items;
+select * from orders;
+select * from returns;
+select * from products;
+select * from customers;
+
+select product_id,product_name ,sum(line_total) as rev, sum(quantity) as qty
+from order_items
+join products using(product_id)
+group by product_id
+order by  sum(quantity) desc, sum(line_total) asc;
+
+
+
+
 
 
 
@@ -3829,10 +3874,6 @@ create TABLE product_dim(
  start_date date,
  end_date date
 );
-
-
-
-
 
 
 

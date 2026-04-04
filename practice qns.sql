@@ -908,7 +908,6 @@ INSERT INTO sw_food VALUES
 (9, 'Rava Idli', 'Veg'),
 (10, 'Schezwan Noodles', 'Veg'),
 (11, 'Veg Manchurian', 'Veg');
-
 select * from sw_food;
 
 -- menu
@@ -972,8 +971,6 @@ CREATE TABLE sw_orders (
     FOREIGN KEY (partner_id) REFERENCES sw_delivery_partner(partner_id)
 );
 
-
-
 INSERT INTO sw_orders 
 (order_id, user_id, r_id, amount, date, partner_id, delivery_time, delivery_rating, restaurant_rating)
 VALUES
@@ -1003,13 +1000,10 @@ VALUES
 (1024,5,2,645,'2022-07-21',2,58,2,1),
 (1025,5,2,645,'2022-07-28',2,44,4,NULL);
 
-
 select * from sw_orders;
 
 
-
 -- order_details
-
 create table sw_order_details (id int auto_increment primary key,
 order_id int ,
 f_id int , 
@@ -1017,7 +1011,7 @@ f_id int ,
 foreign key(order_id) references sw_orders(order_id),
 foreign key(f_id) references sw_food(f_id));
 
-INSERT INTO order_details (order_id, f_id) VALUES
+INSERT INTO sw_order_details (order_id, f_id) VALUES
 (1001, 1),
 (1001, 3),
 (1002, 4),
@@ -1068,3 +1062,73 @@ INSERT INTO order_details (order_id, f_id) VALUES
 (1025, 3),
 (1025, 4),
 (1025, 5);
+
+select * from sw_users;
+select * from sw_food;
+select * from sw_orders
+select * from  sw_menu
+select * from sw_delivery_partner
+select * from sw_rest
+select * from sw_order_details
+
+
+-- 1. Find customers who have never ordered
+select * 
+from sw_users 
+where user_id not in (select  user_id from sw_orders)
+
+select * 
+from sw_users su
+left join sw_orders so using(user_id)
+where so.user_id is null
+
+-- 2. Avg price of each dish
+select f.f_id,f.f_name, avg(m.price) as avg_price
+from sw_menu m
+join sw_food f using(f_id)
+group by  f.f_id,f.f_name
+
+
+-- 3.Find top rest acc. to no. of orders in a given month.
+
+select r.r_id, r.r_name , count(o.order_id) as order_count 
+from sw_orders o
+join sw_rest r using(r_id)
+where monthname(o.date) like 'July'
+group by  r.r_id, r.r_name
+order by order_count desc 
+limit 1
+
+-- 4.Rest with monthly sales > 1000 
+select r_id,r.r_name,monthname(date) as o_month, sum(amount) as sales
+from sw_orders
+join sw_rest r using(r_id)
+group by monthname(date), r_id
+having sum(amount) >1000
+ 
+-- 5. Customer ordered detail in a given date range (10th june to 10th july)
+select o.user_id, o.order_id, r.r_name, f.f_name
+from sw_orders o
+join sw_rest r using(r_id)
+join sw_order_details od using(order_id)
+join sw_food f using(f_id)
+where user_id = (select user_id from sw_users where name like 'Neha')
+and date between  '2022-06-10' and '2022-07-10'
+
+
+-- 6. Find rest with most repeated customers.
+select * from sw_users;
+select * from sw_food;
+select * from sw_orders
+select * from  sw_menu
+select * from sw_delivery_partner
+select * from sw_rest
+select * from sw_order_details
+
+
+select count(o.user_id), r.r_id, r.r_name
+from sw_rest r
+join sw_orders o using(r_id)
+join sw_users u using(user_id)
+group by r.r_id, r.r_name
+

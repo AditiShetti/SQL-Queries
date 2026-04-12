@@ -1,7 +1,6 @@
 
 -- E-commerce schema & sample data 
 -- MySQL 8.x compatible
-DROP DATABASE IF EXISTS malti_gauri;
 CREATE DATABASE ecommerce_practice CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE ecommerce_practice;
 
@@ -17,7 +16,7 @@ CREATE TABLE customers (
   created_at DATETIME NOT NULL,
   INDEX idx_customers_city (city),
   INDEX idx_customers_state (state)
-) ENGINE=InnoDB;
+) ENGINE=InnoDB;   -- transacton, rollback etc
 
 show tables;
 select * from customers;
@@ -2915,6 +2914,7 @@ INSERT INTO order_items (order_item_id, order_id, product_id, quantity, unit_pri
 (1552,798,33,1,840.49,0.00,840.49,840.49),
 (1553,799,7,1,7796.48,779.65,7016.83,7016.83),
 (1554,800,36,4,4902.59,735.39,4167.20,16668.80);
+
 INSERT INTO returns (return_id, order_item_id, reason, status, requested_at, approved_at, refund_amount) VALUES
 (1,1524,'No Longer Needed','Requested','2025-03-14 21:30:00',NULL,0.00),
 (2,271,'Size Issue','Refunded','2024-09-08 05:17:00','2024-09-09 05:17:00',817.95),
@@ -3085,12 +3085,12 @@ where dayname(order_datetime) in ('Sunday','Saturday')
 
 with weekend_order_pct as 
 (select count(*) as total_orders, 
-	   sum(case when dayname(order_datetime) in ('Sunday','Saturday') 
+	   sum(case when dayname(order_datetime) in ('Sunday','Saturday') )
        then 1 else 0 end )
         as weekend_orders
 from orders)
 select (weekend_orders/total_orders) *100 as weekend_order_pct
-from weekend_order_pct
+from weekend_order_pct;
 
 -- Q4. Orders with quantity more than 1 .
 with cte as 
@@ -3794,7 +3794,6 @@ Group by shipping_state
 
 
 -- Q55. Product wise price anomaly detection(Price variation)
-
 select p.product_id,p.product_name , 
 		count(*) as total_orders,
         avg(sell_price) as avg_sell_price,
@@ -3805,31 +3804,29 @@ group by p.product_id,p.product_name
 having max(sell_price)- min(sell_price) >= 1000
 order by max(sell_price)- min(sell_price) desc ;
 
-
+-	
 -- Q56. Find the top 3 product categories by total revenue in the last 6 months. For each, also show the return rate (% of order items returned).
 select category, 
-		sum(case when order_id not in (select order_id from order_items join returns using(order_item_id))) then line_total else 0 end as revenue 
+		sum(case when order_id not in
+             (select order_id from order_items right join returns using(order_item_id)) then line_total else 0 end) as revenue,
+        count(return_id)/count(oi.order_item_id)*100 as return_pct
 from orders o 
 join order_items oi using(order_id)
 join products using(product_id)
-where and  order_datetime >= (select max(order_datetime) from orders) - interval 6 month
+left join returns using(order_item_id)
+where order_datetime >= (select max(order_datetime) from orders) - interval 6 month
 group by category
-order by sum(line_total) desc;
-
-select category, sum(line_total) as revenue
-from orders o 
-join order_items oi using(order_id)
-join products using(product_id)
-join returns r using(order_item_id)
-where order_id not in (select order_id from order_items join returns using(order_item_id) )
-      and  order_datetime >= (select max(order_datetime) from orders) - interval 6 month
-group by category
-order by sum(line_total) desc;
+order by revenue desc
+limit 3;
 
 
-
--- Q57. Products with high quantity but low revenue. 
-prods ordered in bulk yet the rev generted is less
+-- Q57. Products with high quantity(>25) but low revenue(<5000). 
+select p.product_id,p.product_name ,sum(line_total) as revenue, sum(quantity) as total_qty
+from order_items
+join products p using(product_id)
+group by product_id
+having sum(quantity)>25 and sum(line_total) <5000
+order by  sum(quantity) desc, sum(line_total) asc;
 
 
 select * from order_items;
@@ -3838,12 +3835,15 @@ select * from returns;
 select * from products;
 select * from customers;
 
-select product_id,product_name ,sum(line_total) as rev, sum(quantity) as qty
-from order_items
-join products using(product_id)
-group by product_id
-order by  sum(quantity) desc, sum(line_total) asc;
 
+-- Cities with highest refund per unit sold.
+
+
+
+-- Find products sold but never returned 
+
+
+-- Single product contributes more than 50% of order value.
 
 
 
@@ -3852,7 +3852,6 @@ order by  sum(quantity) desc, sum(line_total) asc;
 
 
 -- Q. IMPLEMENTING SLOWLY CHANGING DIMENSIONS
-
 CREATE TABLE product_stg(
     Product_id  INT,
     Product_Name VARCHAR(50),

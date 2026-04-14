@@ -3047,6 +3047,9 @@ INSERT INTO returns (return_id, order_item_id, reason, status, requested_at, app
 (129,368,'Size Issue','Refunded','2025-02-10 13:47:00','2025-02-12 13:47:00',1229.96),
 (130,1422,'Damaged','Requested','2025-08-13 05:34:00',NULL,0.00);
 
+
+COMMIT;
+
 show tables;
 select * from customers;
 select * from order_items;
@@ -3836,19 +3839,50 @@ select * from products;
 select * from customers;
 
 
--- Cities with highest refund per unit sold.
+-- Q58. Cities with highest refund per unit sold.
+select shipping_city as city,
+ ROUND(sum(refund_amount)/ sum(quantity),2) as refund_per_unit
+from orders
+join order_items using(order_id)
+join returns using(order_item_id)
+group by shipping_city
+ORDER BY refund_per_unit desc;
+
+
+-- Q59. Find products sold but never returned 
+with cte as 
+(select  product_id,product_name
+from products p
+join order_items oi using(product_id)
+left join returns using(order_item_id)
+where return_id is null)
+select count(*)
+from cte
 
 
 
--- Find products sold but never returned 
+-- Q60.Single product contributes more than 50% of order value.
+with cte1 as 
+(select order_id , product_id, line_total as item_sum
+from order_items 
+join products using (product_id)
+),
+cte2 as
+(
+select order_id , sum(order_total) as total_amount,
+sum(order_total)/2 as 50pct_order_value
+from orders
+group by order_id)
+select order_id , product_id, item_sum , total_amount,50pct_order_value
+from cte1 join cte2 using(order_id)
+where item_sum > 50pct_order_value and item_sum != total_amount
 
 
--- Single product contributes more than 50% of order value.
-
-
-
-
-
+select order_id , product_id, line_total as item_sum, order_total
+from order_items 
+join orders using (order_id)
+where line_total > 0.5 * order_total 
+and line_total != order_total 
 
 
 -- Q. IMPLEMENTING SLOWLY CHANGING DIMENSIONS

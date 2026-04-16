@@ -861,9 +861,6 @@ name varchar(30) not null,
 email varchar(30) unique not null,
 password varchar(30) not null);
 
-insert into sw_users 
-values(1,'Nitish', 'nitish@gmail.com', 'p252h');
-
 insert into sw_users values(1,'Nitish', 'nitish@gmail.com', 'p252h');
 INSERT INTO sw_users VALUES (2, 'Khushboo', 'khushboo@gmail.com', 'hxn9b');
 INSERT INTO sw_users VALUES (3, 'Vartika', 'vartika@gmail.com', '9hu7j');
@@ -1090,11 +1087,10 @@ group by  f.f_id,f.f_name
 
 
 -- 3.Find top rest acc. to no. of orders in a given month.
-
 select r.r_id, r.r_name , count(o.order_id) as order_count 
 from sw_orders o
 join sw_rest r using(r_id)
-where monthname(o.date) like 'July'
+where monthname(o.date) like 'June'
 group by  r.r_id, r.r_name
 order by order_count desc 
 limit 1
@@ -1105,6 +1101,7 @@ from sw_orders
 join sw_rest r using(r_id)
 group by monthname(date), r_id
 having sum(amount) >1000
+ 
  
 -- 5. Customer ordered detail in a given date range (10th june to 10th july)
 select o.user_id, o.order_id, r.r_name, f.f_name
@@ -1126,9 +1123,35 @@ select * from sw_rest
 select * from sw_order_details
 
 
-select count(o.user_id), r.r_id, r.r_name
-from sw_rest r
-join sw_orders o using(r_id)
+with cte as
+(select r_id, user_id,r_name,count(*) as visits
+from sw_orders
+join sw_rest using(r_id)
+group by  user_id , r_id,r_name
+having count(*)>1
+)
+select r_id,r_name, count(*) as loyal_cust
+from cte
+group by r_id,r_name
+order by loyal_cust desc
+limit 1
+
+-- Find name of the most loyal customers for each rest
+
+with cte as
+(select r_id, user_id,r_name,count(*) as visits
+from sw_orders
+join sw_rest using(r_id)
+group by  user_id , r_id,r_name
+having count(*)>1
+),
+ranked as (
+select c.r_id,c.r_name,u.user_id,u.name,
+dense_rank() over(partition by r_id order by visits desc) as dn
+from cte c
 join sw_users u using(user_id)
-group by r.r_id, r.r_name
+order by dn desc)
+select *
+from ranked 
+where dn=1;
 

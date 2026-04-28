@@ -57,6 +57,12 @@ https://8weeksqlchallenge.com/
 
 
 https://sqlpd.com/  
+
+
+https://leetquery.com/sql-gym   
+is also a new resource which was vibe coded by someone. I want to complete all the questions.  
+It also has 3 data projects and 3 data modelling too.  
+  
  
 I plan to keep adding more queries that I find interesting.     
 
